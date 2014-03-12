@@ -23,4 +23,5 @@ OTHER_FILES += \
     qml/BeachBot_GUI/JoyStick_Mover.qml \
     qml/BeachBot_GUI/JoyStick_Button.qml \
     qml/BeachBot_GUI/JoyStickTest.qml \
-    qml/BeachBot_GUI/xmlRequestTest.qml
+    qml/BeachBot_GUI/xmlRequestTest.qml \
+    qml/BeachBot_GUI/xmlRequestTest2.qml

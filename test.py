@@ -8,8 +8,8 @@ def hello():
 
 @app.route("/test2/<float:angle>/<float:_abs>")
 def test2(angle, _abs):   
-    l = {"args": [angle, _abs, 1,3,4,56,6], "other_stuff": "asdasd"}
-    l["another_coord"] = {"dict2": [1,23,1]}
+    l = [angle, _abs]
+    print(l)
     return json.dumps(l)
     return "Hello World! ASDSDASDASDSD"
 

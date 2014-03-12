@@ -4,11 +4,11 @@ Rectangle {
     id: screen
     width: 700; height:500
     //property int partition: 1/8
-    JoyStick{
+    JoyStickTest {
         id: joystick1
         anchors.centerIn: screen
-        jwidth: 200
-        jheight: 200
+        jwidth1: 200
+        jheight1: 200
     }
 
 
