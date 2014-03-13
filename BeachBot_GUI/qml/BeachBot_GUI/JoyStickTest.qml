@@ -19,6 +19,19 @@ Rectangle {
         var mag2 = x*x + y*y
         var mag = Math.sqrt(mag2)/((jwidth1-jwidth1/3)/2)
         console.log(mag, angle2)
+        var angle2r = angle2.toPrecision(4)
+        var mag2r = mag.toPrecision(4)
+
+        var xmlhttp=new XMLHttpRequest();
+        xmlhttp.open('GET', "http://127.0.0.1:5000/test2/" + angle2r + "/" + mag2r, true);
+        xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4) {
+                    console.log(xmlhttp.responseText);
+                    var testjson = JSON.parse(xmlhttp.responseText);
+                    console.log(testjson)
+                } else { console.log("fail"); }
+            };
+        xmlhttp.send(null);
     }
 
     onStickReleased: {

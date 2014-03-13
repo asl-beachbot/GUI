@@ -1,8 +1,8 @@
 from flask import Flask
 from werkzeug.routing import NumberConverter, ValidationError
 import json
-app = Flask(__name__)
 
+app = Flask(__name__)
  
 class NegativeFloatConverter(NumberConverter):
     regex = r'\-?\d+\.\d+'
@@ -24,5 +24,12 @@ def test2(angle, _abs):
     return json.dumps(l)
     return "Hello World! ASDSDASDASDSD"
 
+@app.route("/elements/<int:index>/<int:state>")
+def test3(index, state):
+    p = [index, state]
+    print(p)
+    return json.dumps(p)
+
 if __name__ == "__main__":
+    app.debug = True
     app.run()

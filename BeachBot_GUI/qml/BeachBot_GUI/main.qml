@@ -1,108 +1,84 @@
 import QtQuick 2.0
 
 Rectangle {
-    id: joystick1
-    property int jwidth1 : 150
-    property int jheight1: 150
-    property real angle : 0
-    property real magnitude: 0
-    width: jwidth1 //background1.width
-    height: jheight1 //background1.height
-
-    signal stickPressed()
-    signal stickMoved(real x, real y)
-    signal stickReleased()
-
-    onStickMoved: {
-        //console.log(x,y)
-        var angle2 = Math.atan2(y,x)*180/3.1416
-        var mag2 = x*x + y*y
-        var mag = Math.sqrt(mag2)/((jwidth1-jwidth1/3)/2)
-        console.log(mag, angle2)
-        var angle2r = angle2.toPrecision(4)
-        var mag2r = mag.toPrecision(4)
-
-
-        var xmlhttp=new XMLHttpRequest();
-        xmlhttp.open('GET', "http://127.0.0.1:5000/test2/" + angle2r + "/" + mag2r, true);
-        xmlhttp.onreadystatechange = function () {
-                if (xmlhttp.readyState == 4) {
-                    console.log(xmlhttp.responseText);
-                    var testjson = JSON.parse(xmlhttp.responseText);
-                    console.log(testjson)
-                } else { console.log("fail"); }
-            };
-        xmlhttp.send(null);
-    }
-
-    onStickReleased: {
-        releaseAnimation.restart()
-        console.log("RELEASED")
-        stickMoved(0,0)
-
-    }
-
-    onStickPressed: {
-        releaseAnimation.stop()
-        console.log("PRESSED")
+    id: screen
+    width: 700; height:500
+    //property int partition: 1/8
+    JoyStickTest {
+        id: joystick1
+        anchors.centerIn: screen
+        jwidth1: 200
+        jheight1: 200
     }
 
 
+    Rectangle{
+        id: rakeControls
+        color: "transparent"
+        anchors.horizontalCenter: screen.horizontalCenter
+        anchors.bottom: screen.bottom
+        anchors.bottomMargin: 20
+        width: parent.width
+        height: parent.height/8
+        z:1
 
-    JoyStick_BackGround{
-        id: background1
-        anchors.centerIn: parent
-        bwidth: jwidth1
-        bheight: jheight1
-
-
-        JoyStick_Mover{
-            id: mover1
-            moverheight: jheight1/3
-            moverwidth: jwidth1/3
+        Row{
+            spacing: screen.width/17
             anchors.centerIn: parent
-        }
 
-        ParallelAnimation{
-            id:releaseAnimation
-            NumberAnimation{target: mover1.anchors; property: "horizontalCenterOffset"; to: 0; duration: 150; easing.type: Easing.InCubic}
-            NumberAnimation{target: mover1.anchors; property: "verticalCenterOffset"; to: 0; duration: 150; easing.type: Easing.InCubic}
-        }
 
-        MouseArea{
-            id: stickArea
-            anchors.fill: parent
-            property real backgroundbound : background1.width*0.5 - mover1.width*0.5
-            property real backgroundbound2 : backgroundbound * backgroundbound
-            property real posX: -mouseY + background1.height*0.5
-            property real posY: -mouseX + background1.height*0.5
-            property real distance2: posX*posX + posY*posY
-
-            onPressed:{
-                stickPressed()
+            JoyStick_Button{
+                id: controller1
+                index: 1
+                label: "Controller 1"
+                buttonHeight: rakeControls.height
+                buttonWidth: screen.width/15
+            }
+            JoyStick_Button{
+                id: controller2
+                index: 2
+                label: "Controller 2"
+                buttonHeight: rakeControls.height
+                buttonWidth: screen.width/15
+            }
+            JoyStick_Button{
+                id: controller3
+                index: 3
+                label: "Controller 3"
+                buttonHeight: rakeControls.height
+                buttonWidth: screen.width/15
+            }
+            JoyStick_Button{
+                id: controller4
+                index: 4
+                label: "Controller 4"
+                buttonHeight: rakeControls.height
+                buttonWidth: screen.width/15
+            }
+            JoyStick_Button{
+                id: controller5
+                index: 5
+                label: "Controller 5"
+                buttonHeight: rakeControls.height
+                buttonWidth: screen.width/15
+            }
+            JoyStick_Button{
+                id: controller6
+                index: 6
+                label: "Controller 6"
+                buttonHeight: rakeControls.height
+                buttonWidth: screen.width/15
+            }
+            JoyStick_Button{
+                id: controller7
+                index: 7
+                label: "Controller 7"
+                buttonHeight: rakeControls.height
+                buttonWidth: screen.width/15
             }
 
-            onReleased: {
-                stickReleased()
-            }
-
-            onPositionChanged: {
-                // angle = Math.atan2(posY,posX)
-                if(distance2 < backgroundbound2){
-                    mover1.anchors.horizontalCenterOffset = -posY
-                    mover1.anchors.verticalCenterOffset = -posX
-                    stickMoved(posX,posY)
-                }
-                else{
-                    var angle1 = Math.atan2(posY,posX)
-                    mover1.anchors.horizontalCenterOffset = - Math.sin(angle1) * backgroundbound
-                    mover1.anchors.verticalCenterOffset = - Math.cos(angle1) * backgroundbound
-                    stickMoved(Math.cos(angle1)*backgroundbound,Math.sin(angle1)*backgroundbound)
-                }
-
-            }
-
-
         }
+
     }
+
 }
