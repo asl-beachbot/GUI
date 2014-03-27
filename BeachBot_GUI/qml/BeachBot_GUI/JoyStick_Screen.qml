@@ -2,13 +2,18 @@ import QtQuick 2.0
 
 Rectangle {
     id: screen
-    width: 700; height:500
+    width: 2560; height:1600
     //property int partition: 1/8
     JoyStickTest {
         id: joystick1
-        anchors.centerIn: screen
-        jwidth1: 200
-        jheight1: 200
+        anchors
+        {
+            verticalCenter:screen.verticalCenter
+            horizontalCenter: screen.horizontalCenter
+            verticalCenterOffset: -200
+        }
+        jwidth1: 800
+        jheight1: 800
     }
 
 
@@ -76,9 +81,6 @@ Rectangle {
                 buttonHeight: rakeControls.height
                 buttonWidth: screen.width/15
             }
-
         }
-
     }
-
 }

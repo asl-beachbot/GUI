@@ -2,30 +2,34 @@ import QtQuick 2.0
 
 Rectangle {
     id: joystick1
-    property int jwidth1
-    property int jheight1
-    width: jwidth1
-    height: jheight1
+    property int jwidth1 : 150
+    property int jheight1: 150
+    property real angle : 0
+    property real magnitude: 0
+    width: jwidth1 //background1.width
+    height: jheight1 //background1.height
 
     signal stickPressed()
     signal stickMoved(real x, real y)
     signal stickReleased()
 
     onStickMoved: {
-        var x_a = -y/((jwidth1-jwidth1*0.33)*0.5)
-        var y_a = x/((jwidth1-jwidth1*0.33)*0.5)
-        var x_b = x_a.toPrecision(3)
-        var y_b = y_a.toPrecision(3)
-        console.log(x_b, y_b)
+        //console.log(x,y)
+        var angle2 = Math.atan2(y,x)*180/3.1416
+        var mag2 = x*x + y*y
+        var mag = Math.sqrt(mag2)/((jwidth1-jwidth1/3)/2)
+        console.log(mag, angle2)
+        var angle2r = angle2.toPrecision(4)
+        var mag2r = mag.toPrecision(4)
 
         var xmlhttp=new XMLHttpRequest();
-        xmlhttp.open('GET', "http://10.10.0.1:5000/test2/" + x_b + "/" + y_b, true);
+        xmlhttp.open('GET', "http://10.10.0.1:5000/test2/" + angle2r + "/" + mag2r, true);
         //xmlhttp.open('GET', "http://localhost:5000/test2/" + angle2r + "/" + mag2r, true);
         xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState == 4) {
                     console.log(xmlhttp.responseText);
-                    //var testjson = JSON.parse(xmlhttp.responseText);
-                    //console.log(testjson)
+                    var testjson = JSON.parse(xmlhttp.responseText);
+                    console.log(testjson)
                 } else { console.log("fail"); }
             };
         xmlhttp.send(null);
@@ -83,6 +87,7 @@ Rectangle {
             }
 
             onPositionChanged: {
+                // angle = Math.atan2(posY,posX)
                 if(distance2 < backgroundbound2){
                     mover1.anchors.horizontalCenterOffset = -posY
                     mover1.anchors.verticalCenterOffset = -posX
@@ -94,7 +99,10 @@ Rectangle {
                     mover1.anchors.verticalCenterOffset = - Math.cos(angle1) * backgroundbound
                     stickMoved(Math.cos(angle1)*backgroundbound,Math.sin(angle1)*backgroundbound)
                 }
+
             }
+
+
         }
     }
 }

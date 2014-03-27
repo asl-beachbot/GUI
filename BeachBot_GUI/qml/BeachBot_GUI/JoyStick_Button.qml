@@ -30,7 +30,8 @@ Rectangle {
                 console.log(button.label + " up")
 
                 var xmlhttp1=new XMLHttpRequest();
-                xmlhttp1.open('GET', "http://127.0.0.1:5000/elements/" + index + "/" + 0, true);
+                xmlhttp1.open('GET', "http://10.10.0.1:5000/elements/" + index + "/" + 0.0, true);
+                //xmlhttp1.open('GET', "http://localhost:5000/elements/" + index + "/" + 0, true);
                 xmlhttp1.onreadystatechange = function () {
                         if (xmlhttp1.readyState == 4) {
                             console.log(xmlhttp1.responseText);
@@ -47,7 +48,8 @@ Rectangle {
                 console.log(button.label + " down")
 
                 var xmlhttp2=new XMLHttpRequest();
-                xmlhttp2.open('GET', "http://127.0.0.1:5000/elements/" + index + "/" + 1, true);
+                xmlhttp2.open('GET', "http://10.10.0.1:5000/elements/" + index + "/" + 1.0, true);
+                //xmlhttp2.open('GET', "http://localhost:5000/elements/" + index + "/" + 1, true);
                 xmlhttp2.onreadystatechange = function () {
                         if (xmlhttp2.readyState == 4) {
                             console.log(xmlhttp2.responseText);

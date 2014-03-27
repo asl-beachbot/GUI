@@ -17,11 +17,12 @@ include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
 qtcAddDeployment()
 
 OTHER_FILES += \
-    qml/BeachBot_GUI/JoyStick.qml \
     qml/BeachBot_GUI/JoyStick_BackGround.qml \
     qml/BeachBot_GUI/JoyStick_Screen.qml \
     qml/BeachBot_GUI/JoyStick_Mover.qml \
     qml/BeachBot_GUI/JoyStick_Button.qml \
     qml/BeachBot_GUI/JoyStickTest.qml \
     qml/BeachBot_GUI/xmlRequestTest.qml \
-    qml/BeachBot_GUI/xmlRequestTest2.qml
+    qml/BeachBot_GUI/xmlRequestTest2.qml \
+    qml/BeachBot_GUI/JoyStickTest2.qml \
+    qml/BeachBot_GUI/JoyWebSocket.qml

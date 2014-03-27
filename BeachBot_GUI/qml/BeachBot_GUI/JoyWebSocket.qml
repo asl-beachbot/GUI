@@ -1,15 +1,52 @@
 import QtQuick 2.0
+import Qt.WebSockets 1.0
 
 Rectangle {
     id: joystick1
-    property int jwidth1
-    property int jheight1
+    property int jwidth1: 400
+    property int jheight1: 400
     width: jwidth1
     height: jheight1
+
+    property string data: " "
 
     signal stickPressed()
     signal stickMoved(real x, real y)
     signal stickReleased()
+
+    WebSocket{
+        id: socket
+        url: "ws://echo.websocket.org"
+        onTextMessageReceived: {
+            messageBox.text = messageBox.text + "\nReceived message: " + message
+        }
+        onStatusChanged: if (socket.status == WebSocket.Error) {
+                             console.log("Error: " + socket.errorString)
+                         } else if (socket.status == WebSocket.Open) {
+                             socket.sendTextMessage("Hello World")
+                         } else if (socket.status == WebSocket.Closed) {
+                             messageBox.text += "\nSocket closed"
+                         }
+        active: false
+    }
+
+    /*WebSocket {
+        id: secureWebSocket
+        url: "wss://echo.websocket.org"
+        onTextMessageReceived: {
+            messageBox.text = messageBox.text + "\nReceived secure message: " + message
+        }
+        onStatusChanged: if (secureWebSocket.status == WebSocket.Error) {
+                             console.log("Error: " + secureWebSocket.errorString)
+                         } else if (secureWebSocket.status == WebSocket.Open) {
+                             secureWebSocket.sendTextMessage("Hello Secure World")
+                         } else if (secureWebSocket.status == WebSocket.Closed) {
+                             messageBox.text += "\nSecure socket closed"
+                         }
+        active: false
+    }*/
+
+
 
     onStickMoved: {
         var x_a = -y/((jwidth1-jwidth1*0.33)*0.5)
@@ -18,7 +55,7 @@ Rectangle {
         var y_b = y_a.toPrecision(3)
         console.log(x_b, y_b)
 
-        var xmlhttp=new XMLHttpRequest();
+        /*var xmlhttp=new XMLHttpRequest();
         xmlhttp.open('GET', "http://10.10.0.1:5000/test2/" + x_b + "/" + y_b, true);
         //xmlhttp.open('GET', "http://localhost:5000/test2/" + angle2r + "/" + mag2r, true);
         xmlhttp.onreadystatechange = function () {
@@ -28,7 +65,9 @@ Rectangle {
                     //console.log(testjson)
                 } else { console.log("fail"); }
             };
-        xmlhttp.send(null);
+        xmlhttp.send(null);*/
+
+        data = x_b + y_b
     }
 
     onStickReleased: {
@@ -42,8 +81,6 @@ Rectangle {
         releaseAnimation.stop()
         console.log("PRESSED")
     }
-
-
 
     JoyStick_BackGround{
         id: background1
@@ -95,6 +132,22 @@ Rectangle {
                     stickMoved(Math.cos(angle1)*backgroundbound,Math.sin(angle1)*backgroundbound)
                 }
             }
+
+            onClicked: {
+                if(socket.active) {
+                    socket.sendTextMessage(data)
+                }
+                else {
+                    socket.active = !socket.active
+                }
+            }
         }
     }
+
+    Text{
+            id: messageBox
+            text: socket.status == WebSocket.Open ? qsTr("Sending...") : qsTr("Welcome!")
+            anchors.verticalCenterOffset: 20
+            z:2
+        }
 }
