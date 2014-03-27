@@ -1,0 +1,38 @@
+# Add more folders to ship with the application, here
+QT += core qml quick websockets
+
+QT += websockets
+folder_01.source = qml/test_Canvas
+folder_01.target = qml
+DEPLOYMENTFOLDERS = folder_01
+
+# Additional import path used to resolve QML modules in Creator's code model
+QML_IMPORT_PATH =
+
+# The .cpp file which was generated for your project. Feel free to hack it.
+SOURCES += main.cpp
+
+# Installation path
+# target.path =
+
+# Please do not modify the following two lines. Required for deployment.
+include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
+qtcAddDeployment()
+
+OTHER_FILES += \
+    qml/test_Canvas/test4.js \
+    qml/test_Canvas/canv2.qml \
+    qml/test_Canvas/Rect.qml \
+    qml/test_Canvas/Circle.qml \
+    qml/test_Canvas/mickey.qml \
+    qml/test_Canvas/screen.qml \
+    qml/test_Canvas/DrawingArea.qml \
+    qml/test_Canvas/MenuBars.qml \
+    qml/test_Canvas/Button1.qml \
+    qml/test_Canvas/main.qml \
+    qml/test_Canvas/Working.qml \
+    qml/test_Canvas/Working_WebSocket.qml
+
+INCLUDEPATH += $$PWD/../../../include
+DEPENDPATH += $$PWD/../../../include
+

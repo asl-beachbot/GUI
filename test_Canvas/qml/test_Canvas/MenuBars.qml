@@ -1,0 +1,104 @@
+import QtQuick 2.0
+import FileDialog 1.0
+import QtQuick.Controls 1.0
+
+Rectangle {
+    id: menuBar
+    property int barwidth
+    property int barheight
+    width: barwidth; height: barheight
+    color:"transparent"
+    border.color: "black"
+    border.width: 1
+
+    Directory{
+        id:directory
+        filename: "asd"
+        //onDirectoryChanged: fileDialog.notifyRefresh()
+    }
+
+    Column {
+        anchors.fill: parent
+        z: 1
+        Rectangle {
+            height:menuBar.height
+            width: menuBar.width
+            color: "beige"
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: "#8C8F8C" }
+                GradientStop { position: 0.17; color: "#6A6D6A" }
+                GradientStop { position: 0.98;color: "#3F3F3F" }
+                GradientStop { position: 1.0; color: "#0e1B20" }
+            }
+            Text {
+                height: parent.height
+                anchors { right: labelRow.left ; verticalCenter:parent.bottom; verticalCenterOffset: -10}
+                text: "Menu:    "
+                color: "red"
+                font {family: "Helvetica"; pointSize:20; bold:true}
+                smooth: true
+            }
+            //row displays its children in a vertical row
+            Row {
+                id: labelRow
+                anchors.centerIn: parent
+                spacing:40
+                Button1 {
+                    id: deletebutton
+                    height: 40; width: 80
+                    label: "Delete"
+                    radius: 3
+                    smooth:true
+                    onButtonClick:{
+                        drawingArea.ctx.clearRect(0, 0, drawingArea.width, drawingArea.height);
+                        drawingArea.sdata = " "
+                        drawingArea.requestPaint()
+                    }
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: "orange" }
+                        GradientStop { position: 1.0; color: "#FFE306" }
+                    }
+                }
+
+                Button1 {
+                    id: saveButton
+                    height: 40; width: 80
+                    label: "Save"
+                    radius: 3
+                    smooth:true
+                    onButtonClick:{
+                        directory.fileContent = drawingArea.sdata
+                        directory.filename = "asd"
+                        directory.saveFile()
+                    }
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: "#ffa800" }
+                        GradientStop { position: 1.0; color: "#FFE306" }
+                    }
+                }
+                Slider{
+                    id: slider1
+                    width: 200
+                    anchors.verticalCenter: parent.verticalCenter
+                    Text{
+                        text: "Choose linewidth"
+                        color: "white"
+                        width: parent.width
+                        anchors{
+                                verticalCenter: slider1.top
+                                verticalCenterOffset: -5
+                                horizontalCenter: slider1.right
+                                horizontalCenterOffset: -slider1.width*0.25
+                        }
+                    }
+                    tickmarksEnabled: true
+                    minimumValue: 2
+                    maximumValue: 20
+                    value: 2
+                    stepSize: 3
+                    onValueChanged: drawingArea.lineWidth = value
+                }
+            }
+        }
+     }
+}
