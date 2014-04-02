@@ -1,10 +1,43 @@
 import QtQuick 2.0
+import Qt.WebSockets 1.0
 
 Rectangle {
     id: screen
     width: 2560; height:1600
+    property int jOYSTICK_MESSAGE_TYPE: 1
     //property int partition: 1/8
-    JoyStickTest {
+    Button1{
+        buttonHeight: 100
+        buttonWidth: 200
+        label: "Quit"
+        onButtonClick: {
+            socket2.close
+        }
+        anchors
+        {
+            top: screen.top
+            left: screen.left
+            topmargin: 10
+            leftmargin:10
+        }
+    }
+
+    WebSocket{
+        id: socket2
+        url: "ws://10.10.0.1:5000/sock"
+        onTextMessageReceived: {
+            messageBox.text = messageBox.text + "\nReceived message: " + message
+        }
+        onStatusChanged: if (socket2.status == WebSocket.Error) {
+                             console.log("Error: " + socket2.errorString)
+                         } else if (socket2.status == WebSocket.Open) {
+                             //socket2.sendTextMessage("Hello World")
+                         } else if (socket2.status == WebSocket.Closed) {
+                             //messageBox.text += "\nSocket closed"
+                         }
+        active: false
+    }
+    JoyWebSocket {
         id: joystick1
         anchors
         {
@@ -32,49 +65,49 @@ Rectangle {
             anchors.centerIn: parent
 
 
-            JoyStick_Button{
+            JoyStick_Button_WebSockets{
                 id: controller1
                 index: 1
                 label: "Controller 1"
                 buttonHeight: rakeControls.height
                 buttonWidth: screen.width/15
             }
-            JoyStick_Button{
+            JoyStick_Button_WebSockets{
                 id: controller2
                 index: 2
                 label: "Controller 2"
                 buttonHeight: rakeControls.height
                 buttonWidth: screen.width/15
             }
-            JoyStick_Button{
+            JoyStick_Button_WebSockets{
                 id: controller3
                 index: 3
                 label: "Controller 3"
                 buttonHeight: rakeControls.height
                 buttonWidth: screen.width/15
             }
-            JoyStick_Button{
+            JoyStick_Button_WebSockets{
                 id: controller4
                 index: 4
                 label: "Controller 4"
                 buttonHeight: rakeControls.height
                 buttonWidth: screen.width/15
             }
-            JoyStick_Button{
+            JoyStick_Button_WebSockets{
                 id: controller5
                 index: 5
                 label: "Controller 5"
                 buttonHeight: rakeControls.height
                 buttonWidth: screen.width/15
             }
-            JoyStick_Button{
+            JoyStick_Button_WebSockets{
                 id: controller6
                 index: 6
                 label: "Controller 6"
                 buttonHeight: rakeControls.height
                 buttonWidth: screen.width/15
             }
-            JoyStick_Button{
+            JoyStick_Button_WebSockets{
                 id: controller7
                 index: 7
                 label: "Controller 7"

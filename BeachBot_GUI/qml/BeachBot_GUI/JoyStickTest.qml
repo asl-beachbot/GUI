@@ -24,7 +24,7 @@ Rectangle {
         xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState == 4) {
                     console.log(xmlhttp.responseText);
-                    //var testjson = JSON.parse(xmlhttp.responseText);
+                    var testjson = JSON.parse(xmlhttp.responseText);
                     //console.log(testjson)
                 } else { console.log("fail"); }
             };

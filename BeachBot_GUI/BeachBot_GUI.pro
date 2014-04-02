@@ -3,6 +3,9 @@ folder_01.source = qml/BeachBot_GUI
 folder_01.target = qml
 DEPLOYMENTFOLDERS = folder_01
 
+QT += core qml quick websockets
+
+QT += websockets
 # Additional import path used to resolve QML modules in Creator's code model
 QML_IMPORT_PATH =
 
@@ -22,7 +25,9 @@ OTHER_FILES += \
     qml/BeachBot_GUI/JoyStick_Mover.qml \
     qml/BeachBot_GUI/JoyStick_Button.qml \
     qml/BeachBot_GUI/JoyStickTest.qml \
-    qml/BeachBot_GUI/xmlRequestTest.qml \
-    qml/BeachBot_GUI/xmlRequestTest2.qml \
     qml/BeachBot_GUI/JoyStickTest2.qml \
-    qml/BeachBot_GUI/JoyWebSocket.qml
+    qml/BeachBot_GUI/JoyWebSocket.qml \
+    qml/BeachBot_GUI/JoyStick_Button_WebSockets.qml
+
+INCLUDEPATH += $$PWD/../../../include
+DEPENDPATH += $$PWD/../../../include
