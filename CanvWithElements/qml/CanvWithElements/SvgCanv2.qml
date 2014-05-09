@@ -9,11 +9,12 @@ Item{
     property real d: 1;
     property real e: 0;
     property real f: 0;
+    property bool active: false
     property real oldAngle: 0
     property real currAngle: 0
     property real oldScale: 1
     property bool selected: false
-    property var coord:[]
+    property var points:[]
     property string path1
     property int type: 2
     property var bb
@@ -28,8 +29,7 @@ Item{
         ctx.fillStyle = "#000000";
         ctx.fill();
         ctx.stroke();
-        if(selected)
-        {
+        if(selected){
             ctx.rect(bb.x,bb.y,bb.width, bb.height);
             ctx.stroke();
         }

@@ -21,4 +21,6 @@ include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
 qtcAddDeployment()
 
 OTHER_FILES += \
-    qml/CanvWithElements/DrawingArea.qml
+    qml/CanvWithElements/DrawingArea.qml \
+    qml/CanvWithElements/Layer1.qml \
+    qml/CanvWithElements/Layer2.qml

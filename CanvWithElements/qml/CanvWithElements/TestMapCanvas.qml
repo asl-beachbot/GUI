@@ -1,7 +1,6 @@
 import QtQuick 2.0
-import Qt.WebSockets 1.0
 
-Canvas{
+Canvas {
     id: canvas2
     property int polesMaxX: 0
     property int polesMaxY: 0
@@ -17,8 +16,6 @@ Canvas{
     property int height1: 600
     width: width1
     height: height1
-    z:1
-
     function updateScale()
     {
         for(var i = 0; i<20; i++)
@@ -183,10 +180,14 @@ Canvas{
 //        updatemap();
 //        poles = [];
         elements.forEach(function(el) {
-            el.renderToCtx(ctx);
+            if(el.active){
+                el.drawOnCanv(ctx);
+            }
+            else{
+                el.renderToCtx(ctx);
+            }
         });
     }
-
     Rectangle{
         z:0
         id: recti2
@@ -211,13 +212,14 @@ Canvas{
             //elements.push(poly1);
             //elements.push(poly2);
 //            elements.push(svg1);
-            elements.push(asd);
+//            elements.push(asd);
 //            updateElements(svg1);
 //            updateElements(asd);
             ctx = mappi.getContext('2d');
         }
     }
     function clear() {
+        console.log("canv_clear");
         ctx.clearRect(0, 0, mappi.width, mappi.height);
     }
 
@@ -228,4 +230,3 @@ Canvas{
         canvas2.requestPaint();
     }
 }
-

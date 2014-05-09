@@ -39,29 +39,29 @@ def hallo():
 msg1 = Joy()
 msg1.buttons = [0,0,0,0,0,0,0,0,0,0]
 
-def remove_duplicates(filename):
-    numbers = []
-    with open(filename) as g:
-        for line in g:
-            if not len(line.strip()) == 0:            
-                numbers.append([float(n) for n in line.strip().split(' ')])
-            elif len(line.strip()) == 0:
-                numbers.append([0,0])
-    x_1, y_1 = numbers[0]
-    for pair in numbers[1:]:
-        try:
-            if x_1 == pair[0] and y_1 == pair[1]:
-                print("jes")
-                numbers.remove(pair)
-            x_1,y_1 = pair[0],pair[1]
-        except IndexError:
-            print("Errororro")
-    string2 = ''
-    for pair1 in numbers:
-        string2 += str(pair1[0]) + " " + str(pair1[1]) + "\n"
-    h = open("filtered.txt", "w")
-    h.write(string2)
-    print(numbers)            
+#def remove_duplicates(filename):
+#    numbers = []
+#    with open(filename) as g:
+#        for line in g:
+#            if not len(line.strip()) == 0:            
+#                numbers.append([float(n) for n in line.strip().split(' ')])
+#            elif len(line.strip()) == 0:
+#                numbers.append([0,0])
+#    x_1, y_1 = numbers[0]
+#    for pair in numbers[1:]:
+#        try:
+#            if x_1 == pair[0] and y_1 == pair[1]:
+#                print("jes")
+#                numbers.remove(pair)
+#            x_1,y_1 = pair[0],pair[1]
+#        except IndexError:
+#            print("Errororro")
+#    string2 = ''
+#    for pair1 in numbers:
+#        string2 += str(pair1[0]) + " " + str(pair1[1]) + "\n"
+#    h = open("filtered.txt", "w")
+#    h.write(string2)
+#    print(numbers)            
 
 class WebsocketApp(WebSocketApplication):
     broadcast_rate = rospy.Rate(25)
@@ -98,9 +98,9 @@ class WebsocketApp(WebSocketApplication):
             elif msg["msg_type"] == 2:
                 #print msg["lwidth"]
                 print(msg["points"])
-                f = open("asd.txt","w",0)
+                f = open("filtered.txt","w",0)
                 f.write(msg["points"])
-                remove_duplicates("asd.txt")
+                #remove_duplicates("asd.txt")
             elif msg["msg_type"] == 6:
                 state_machine1 = msg["state"]
                 state_machine2 = int(state_machine1)

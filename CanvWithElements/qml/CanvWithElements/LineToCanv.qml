@@ -6,7 +6,7 @@ Item {
     property string path1: ""
     property string svgData: ""
     property string svgTerminator: "\n</svg>"
-    property var points: []
+    property var points: [0,0]
     property int last_displayed: 0
     property bool selected: true
     property bool active: false
@@ -14,9 +14,8 @@ Item {
     property var svgCurArr: []
     property int type: 3
 
-    function init(){
-        svgData =  "<?xml version='1.0'?>\n<svg>";
-    }
+    state: "RELEASED"
+
     function normalvector(po1,po2){
         var normalvector1 = [];
         var v1x = po1.y-po2.y;
@@ -35,41 +34,47 @@ Item {
     }
     function offsetPoints(val){
         var offsetPoints = [];
-        var p1 = points[0];
-        var p2 = points[1];
-        for (var i = 1, len = points.length; i < len; i++) {
+        var p1 = this.points[0];
+        var p2 = this.points[1];
+        for (var i = 1, len = this.points.length; i < len; i++) {
             var nv = normalvector(p1,p2)
             offsetPoints.push({
-                x: points[i].x + val*nv.x,
-                y: points[i].y + val*nv.y
+                x: this.points[i].x + val*nv.x,
+                y: this.points[i].y + val*nv.y
             });
-            p1 = points[i];
-            p2 = points[i+1];
+            p1 = this.points[i];
+            p2 = this.points[i+1];
         }
         return offsetPoints;
     }
     function mouseMove(x_a,y_a){
         var dx = Math.round(x_a);
         var dy = Math.round(y_a);
-        if (points.length > 0 && points[points.length-1].x === dx && points[points.length-1].y === dy)
+        if (this.points.length > 0 && this.points[this.points.length-1].x === dx && this.points[this.points.length-1].y === dy)
             return false;
-        points.push({x:dx, y:dy});
+        this.points.push({x:dx, y:dy});
         svgData += ", " + dx + ", " + dx;
+//        path1 += ", " + dx + ", " + dx
         return true;
     }
 
     function mouseStart(x_a,y_a){
-        points.push({x: x_a, y: y_a});
+        console.log("Mouse_Start");
+        this.points.push({x: x_a, y: y_a});
         svgData += "\n<path fill='none' stroke='#000000'" + " stroke-width='" + lineWidth1 + "' d='M" + x_a + ", " + y_a + " L" + x_a + ", " + y_a;
+//        path1 += "M" + x_a + ", " + y_a + " L" + x_a + ", " + y_a;
     }
 
     function mouseStop(){
-        points.length = 0;
+        console.log("Mouse_Stop");
+        //points.length = 0;
+        createLine.state = "BUTTON_RELEASED";
+        this.active = false;
         svgData += " '/>";
         last_displayed = 0;
     }
 
-    function renderToCtx(ctx){
+    function drawOnCanv(ctx){
         function stroke(points){
           if (points.length <= 1)
               return;
@@ -116,8 +121,21 @@ Item {
             stroke(offsetPoints(10));
             stroke(offsetPoints(14));
         }
-        last_displayed = points.length
-        //ctx.restore();
+        this.last_displayed = this.points.length
+    }
+
+    function renderToCtx(ctx){
+        ctx.save();
+        ctx.beginPath();
+        ctx.lineWidth = 6*lineWidth1;
+        ctx.lineJoin = ctx.lineCap = 'round';
+        ctx.strokeStyle = "#000000";
+        ctx.moveTo(this.points[0].x,this.points[0].y);
+        for(var i=1;i<this.points.length; i++){
+            ctx.lineTo(this.points[i].x, this.points[i].y);
+        }
+        ctx.stroke();
+        ctx.restore();
     }
     function deselectAllNodes(){
         return;
@@ -142,5 +160,4 @@ Item {
     function importPath(){
 
     }
-
 }

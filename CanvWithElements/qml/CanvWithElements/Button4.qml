@@ -10,6 +10,7 @@ Rectangle {
 
     property color buttonColor: "lightblue"
     property color borderColor: "white"
+    property color labelColor: "#DCDCCC"
 
     radius: 10
     antialiasing: true
@@ -22,7 +23,7 @@ Rectangle {
         id: buttonLabel
         anchors.centerIn: parent
         text: label
-        color: "#DCDCCC"
+        color: labelColor
         font.pointSize: labelSize
     }
 

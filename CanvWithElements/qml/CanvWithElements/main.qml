@@ -14,10 +14,7 @@ Rectangle {
     property int sTATE_MESSAGE_TYPE: 6
     property var svg_fig: []
     property var svg_mic: []
-
-    LineToCanv{
-        id: asd
-    }
+    property var line_arr: []
 
     WebSocket{
         id: socket2
@@ -48,6 +45,43 @@ Rectangle {
                          }
         active: false
     }
+    Button4{
+        property int linewidth3: 1
+        anchors{
+            left:screen.left
+            top: screen.top
+            leftMargin: 150
+            topMargin: 100
+        }
+        id: whandler
+        buttonHeight: 250
+        buttonWidth: 250
+        radius: 250
+        labelColor: "orange"
+        buttonColor: "yellow"
+        label: "Width: " + linewidth3
+        onButtonClick:{
+            if(linewidth3 < 4){
+                linewidth3 += 1;
+            }
+            else{
+                linewidth3 = 1;
+            }
+        }
+        states:[
+        State{
+                name: "BUTTON_ACTIVE"
+                PropertyChanges{target: whandler; color: whandler.buttonColor}
+                PropertyChanges{target: whandler; color: "orange"}
+            },
+        State{
+                name: "BUTTON_RELEASED"
+                PropertyChanges{target: whandler; color: "transparent"}
+                PropertyChanges{target: whandler; labelColor: "transparent"}
+            }
+        ]
+    }
+
     Column{
         anchors{
             left: screen.left
@@ -57,25 +91,23 @@ Rectangle {
 
         id: actionContainer
         spacing: 30
+
         Button4{
             buttonColor: "red"
             label: "Figure"
             onButtonClick:{
-                linehandler.state = "BUTTON_RELEASED";
-                asd.active = false;
+                createLine.state = "BUTTON_RELEASED";
                 var tmp = Qt.createComponent("StrangeFigure.qml");
-                if (tmp.status === Component.Ready)
-                {
+                if (tmp.status === Component.Ready){
                     var svg_fig1 = tmp.createObject(screen);
                     mappi.elements.forEach(function(el){
                         el.selected = false;
+                        el.active = false;
                     });
                     svg_fig.push(svg_fig1)
                     svg_fig[svg_fig.length -1].getDimensions();
                     svg_fig[svg_fig.length -1].importPath();
                     svg_fig[svg_fig.length -1].selected = true;
-
-                    console.log(svg_fig.length)
                     mappi.elements.push(svg_fig[svg_fig.length -1]);
                     mappi.requestPaint();
                 }
@@ -85,36 +117,50 @@ Rectangle {
             buttonColor: "green"
             label: "Mickey"
             onButtonClick:{
-                linehandler.state = "BUTTON_RELEASED";
-                asd.active = false;
+                createLine.state = "BUTTON_RELEASED";
                 var tmp1 = Qt.createComponent("Mickey.qml");
-                if (tmp1.status === Component.Ready)
-                {
-                    svg_mic = tmp1.createObject(screen);
-                    svg_mic.getDimensions();
-                    svg_mic.importPath();
-                    mappi.elements.push(svg_mic);
+                if (tmp1.status === Component.Ready){
+                    var svg_mic1 = tmp1.createObject(screen);
+                    mappi.elements.forEach(function(el){
+                        el.selected = false;
+                        el.active = false;
+                    });
+                    svg_mic.push(svg_mic1);
+                    svg_mic[svg_mic.length - 1].getDimensions();
+                    svg_mic[svg_mic.length - 1].importPath();
+                    svg_mic[svg_mic.length - 1].selected = true;
+                    mappi.elements.push(svg_mic[svg_mic.length - 1]);
                     mappi.requestPaint();
                 }
             }
         }
         Button2{
-            id: linehandler
-            buttonColor: "blue"
-            label: "DrawLine"
+            id: createLine
+            buttonColor: "orange"
+            label: "CreateLine"
             onButtonClick:{
-                mappi.elements.forEach(function(el) {
-                    if(el.selected){
-                        el.selected = false;
-                        console.log("selfalse");
+                if(createLine.state == "BUTTON_PRESSED"){
+                    var tmp2 = Qt.createComponent("LineToCanv.qml");
+                    if (tmp2.status === Component.Ready){
+                        var line_arr1 = tmp2.createObject(screen);
+                        mappi.elements.forEach(function(el){
+                            el.selected = false;
+                            mappi.requestPaint();
+                            mappi.clear();
+                        });
+                        line_arr.push(line_arr1);
+//                        line_arr[line_arr.length - 1].getDimensions();
+//                        line_arr[line_arr.length - 1].importPath();
+                        line_arr[line_arr.length - 1].active = true;
+                        line_arr[line_arr.length - 1].lineWidth1 = whandler.linewidth3;
+                        mappi.elements.push(line_arr[line_arr.length - 1]);
+                        mappi.requestPaint();
                     }
-                });
-
-                if(linehandler.state == "BUTTON_PRESSED"){
-                    asd.active = true;
                 }
-                else if(linehandler.state == "BUTTON_RELEASED"){
-                    asd.active = false;
+                else if(createLine.state == "BUTTON_RELEASED"){
+                    mappi.elements.forEach(function(el){
+                        el.active = false;
+                    });
                 }
             }
         }
@@ -134,30 +180,34 @@ Rectangle {
                 mappi.elements.forEach(function(el) {
                         el.path1 = " ";
                         svg_fig = [];
+                        svg_mic = [];
+                        line_arr = [];
                         el.svgCurArr = [];
                         el.svgOldArr = [];
                         el.updateSvgArr();
                         el.selected = false;
+                        el.points = [];
+                        el.active = false;
                         mappi.requestPaint();
                         mappi.clear();
-                        asd.active = false;
-                        linehandler.state = "BUTTON_RELEASED";
+                        createLine.state = "BUTTON_RELEASED";
                 });
                 mappi.elements = [];
-                mappi.elements.push(asd);
                 console.log("clear");
             }
         }
         Button4{
             buttonColor: "green"
-            label: "2"
+            label: "Show"
+            onButtonClick:{
+                console.log(asd.svgData.length);
+            }
         }
         Button4{
             buttonColor: "blue"
             label: "3"
         }
     }
-
     Rectangle{
         anchors.centerIn: parent
         height: 1400
