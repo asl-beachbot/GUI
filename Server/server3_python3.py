@@ -4,7 +4,9 @@ import random
 import rospy
 import threading
 import math
-
+import sys
+sys.path.append("/home/beachbot/Programs/pathmaker")
+sys.path.append("/home/beachbot/Programs/pathmaker/python")
 #from time import sleep
 
 from std_msgs.msg import String
@@ -22,6 +24,8 @@ from geventwebsocket import WebSocketServer, WebSocketApplication, Resource
 from gevent import Greenlet
 import gevent
 import gevent.monkey
+
+from beachbot_pathgen import Generator
 
 # gevent.monkey.patch_all()
 
@@ -108,6 +112,13 @@ class WebsocketApp(WebSocketApplication):
                 msg2 = State()
                 msg2.state = state_machine2
                 pub3.publish(msg2)
+            elif msg["msg_type"] == 7:
+                path1 = msg["path"]
+                print(path1)
+                G = Generator()
+                path2 = path1.encode("utf-8")
+                G.parse_string(path2)
+                G.run_routine()
             else:
                 #print message
                 return
