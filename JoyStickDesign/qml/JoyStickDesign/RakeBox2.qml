@@ -1,19 +1,26 @@
 import QtQuick 2.0
 
 Rectangle{
+    function updateState(state_1){
+        if(state_1 === "RELEASED"){
+            state_1 = "PRESSED";
+        }
+        else if (state_1 === "PRESSED"){
+            state_1 = "RELEASED";
+        }
+        return state_1
+    }
+
     id: box
     property int boxwidth
     property int boxlength
     property int lineWidth: 0
-    property bool isPinchingPlus: false
-    property bool isPinchingMinus: false
     width: boxwidth
     height: boxlength
     color: "transparent"
-//    border.color: "yellow"
-//    border.width: 5
 
     Column{
+        id: coli
         z:2
         anchors.centerIn: parent
         spacing:20
@@ -24,14 +31,9 @@ Rectangle{
             buttonHeight: 140
             buttonWidth: boxwidth
             onButtonClick:{
-                mappi.requestPaint();
-                if(controller1.state === "BUTTON_PRESSED"){
-                    state1 = "PRESSED";
-                }
-                else if (controller1.state === "BUTTON_RELEASED"){
-                    state1 = "RELEASED";
-                }
+                state1 = updateState(state1);
             }
+            state: state1
         }
         Button2{
             id: controller2
@@ -40,13 +42,9 @@ Rectangle{
             buttonHeight: 140
             buttonWidth: boxwidth
             onButtonClick:{
-                if(controller2.state === "BUTTON_PRESSED"){
-                    state2 = "PRESSED";
-                }
-                else if (controller2.state === "BUTTON_RELEASED"){
-                    state2 = "RELEASED";
-                }
+                state2 = updateState(state2);
             }
+            state: state2
         }
         Button2{
             id: controller3
@@ -55,13 +53,9 @@ Rectangle{
             buttonHeight: 140
             buttonWidth: boxwidth
             onButtonClick:{
-                if(controller3.state === "BUTTON_PRESSED"){
-                    state3 = "PRESSED";
-                }
-                else if (controller3.state === "BUTTON_RELEASED"){
-                    state3 = "RELEASED";
-                }
+                state3 = updateState(state3);
             }
+            state: state3
         }
         Button2{
             id: controller4
@@ -70,13 +64,9 @@ Rectangle{
             buttonHeight: 140
             buttonWidth: boxwidth
             onButtonClick:{
-                if(controller4.state === "BUTTON_PRESSED"){
-                    state4 = "PRESSED";
-                }
-                else if (controller4.state === "BUTTON_RELEASED"){
-                    state4 = "RELEASED";
-                }
+                state4 = updateState(state4);
             }
+            state: state4
         }
         Button2{
             id: controller5
@@ -85,13 +75,9 @@ Rectangle{
             buttonHeight: 140
             buttonWidth: boxwidth
             onButtonClick:{
-                if(controller5.state === "BUTTON_PRESSED"){
-                    state5 = "PRESSED";
-                }
-                else if (controller5.state === "BUTTON_RELEASED"){
-                    state5 = "RELEASED";
-                }
+                state5 = updateState(state5);
             }
+            state: state5
         }
         Button2{
             id: controller6
@@ -100,13 +86,9 @@ Rectangle{
             buttonHeight: 140
             buttonWidth: boxwidth
             onButtonClick:{
-                if(controller6.state === "BUTTON_PRESSED"){
-                    state6 = "PRESSED";
-                }
-                else if (controller6.state === "BUTTON_RELEASED"){
-                    state6 = "RELEASED";
-                }
+                state6 = updateState(state6);
             }
+            state: state6
         }
         Button2{
             id: controller7
@@ -115,27 +97,9 @@ Rectangle{
             buttonHeight: 140
             buttonWidth: boxwidth
             onButtonClick:{
-                if(controller7.state === "BUTTON_PRESSED"){
-                    state7 = "PRESSED";
-                }
-                else if (controller7.state === "BUTTON_RELEASED"){
-                    state7 = "RELEASED";
-                }
+                state7 = updateState(state7);
             }
-        }
-    }
-
-    MouseArea{
-        id: rakeArea
-        anchors.fill: box
-        onDoubleClicked:{
-            controller1.state = "BUTTON_RELEASED"
-            controller2.state = "BUTTON_RELEASED"
-            controller3.state = "BUTTON_RELEASED"
-            controller4.state = "BUTTON_RELEASED"
-            controller5.state = "BUTTON_RELEASED"
-            controller6.state = "BUTTON_RELEASED"
-            controller7.state = "BUTTON_RELEASED"
+            state: state7
         }
     }
 }

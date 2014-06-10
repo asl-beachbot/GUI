@@ -12,7 +12,7 @@ Rectangle {
     property int bUTTON_MESSAGE_TYPE: 3
     property string imageSource1: "../pics/switchLeft1.png"
     property string imageSource2: "../pics/switchRight1.png"
-    state: "BUTTON_RELEASED"
+    state: "RELEASED"
     antialiasing: true
     width: buttonWidth
     height: buttonHeight
@@ -38,14 +38,8 @@ Rectangle {
     MouseArea{
         id: buttonMouseArea
         anchors.fill: parent
-        hoverEnabled: true
+        enabled: true
         onClicked:{
-            if(button1.state === "BUTTON_PRESSED"){
-                button1.state = "BUTTON_RELEASED";
-            }
-            else if (button1.state === "BUTTON_RELEASED"){
-                button1.state = "BUTTON_PRESSED";
-            }
             buttonClick();
         }
     }
@@ -82,11 +76,9 @@ Rectangle {
             socket2.active = !socket2.active
         }
     }
-
-
     states:[
     State{
-            name: "BUTTON_PRESSED"
+            name: "PRESSED"
             PropertyChanges{target: switchImage; source:imageSource2}
             PropertyChanges{target: switchImage; anchors.horizontalCenterOffset: 35}
             StateChangeScript{
@@ -95,7 +87,7 @@ Rectangle {
             }
         },
     State{
-            name: "BUTTON_RELEASED"
+            name: "RELEASED"
             PropertyChanges{target: switchImage; source:imageSource1}
             PropertyChanges{target: switchImage; anchors.horizontalCenterOffset: -35}
             StateChangeScript{
@@ -106,13 +98,12 @@ Rectangle {
     ]
     transitions:[
         Transition{
-           to: "BUTTON_PRESSED"
+           to: "PRESSED"
            ScriptAction{scriptName: "send1"}
         },
         Transition{
-            to: "BUTTON_RELEASED"
+            to: "RELEASED"
             ScriptAction{scriptName: "send2"}
         }
-
     ]
 }

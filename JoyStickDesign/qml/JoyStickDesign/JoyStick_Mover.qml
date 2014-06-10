@@ -7,7 +7,7 @@ Rectangle {
     height: moverheight
     width: moverwidth
 
-    radius: moverheight / 2
+    radius: moverheight * 0.5
 
 
     Image{

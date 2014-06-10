@@ -15,11 +15,10 @@ Rectangle {
     signal stickReleased()
 
     onStickMoved: {
-        var x_a = y/((jwidth1-jwidth1*0.33)*0.5)
-        var y_a = x/((jwidth1-jwidth1*0.33)*0.5)
+        var x_a = y/((jwidth1-mover1.moverheight)*0.5)
+        var y_a = x/((jwidth1-mover1.moverwidth)*0.5)
         var x_b = x_a.toPrecision(3)
         var y_b = y_a.toPrecision(3)
-        console.log(x_b, y_b)
         var json1 = {
             "msg_type": jOYSTICK_MESSAGE_TYPE,
             "x_posi": x_b,
@@ -38,7 +37,6 @@ Rectangle {
         releaseAnimation.restart()
         console.log("RELEASED")
         stickMoved(0,0)
-
     }
 
     onStickPressed: {
@@ -67,35 +65,36 @@ Rectangle {
             NumberAnimation{target: mover1.anchors; property: "verticalCenterOffset"; to: 0; duration: 150; easing.type: Easing.InCubic}
         }
 
-        MouseArea{
+        MultiPointTouchArea{
             id: stickArea
             anchors.fill: parent
             property real backgroundbound : background1.width*0.5 - mover1.width*0.5
             property real backgroundbound2 : backgroundbound * backgroundbound
-            property real posX: -mouseY + background1.height*0.5
-            property real posY: -mouseX + background1.height*0.5
+            property real posX: -point1.x + background1.height*0.5
+            property real posY: -point1.y + background1.height*0.5
             property real distance2: posX*posX + posY*posY
-
+            minimumTouchPoints: 1
+            maximumTouchPoints: 1
+            touchPoints:[
+                TouchPoint{id: point1}
+            ]
             onPressed:{
-                stickPressed()
+                stickPressed();
             }
-
-            onReleased: {
-                stickReleased()
+            onReleased:{
+                stickReleased();
             }
-
-            onPositionChanged: {
+            onUpdated: {
                 var angle1 = Math.atan2(posY,posX)
                 if(distance2 < backgroundbound2){
-                    mover1.anchors.horizontalCenterOffset = -posY
-                    mover1.anchors.verticalCenterOffset = -posX
-                    stickMoved(posX,-posY)
+                    mover1.anchors.horizontalCenterOffset = -posX
+                    mover1.anchors.verticalCenterOffset = -posY
+                    stickMoved(posY,-posX)
                 }
                 else {
-                    //var angle1 = Math.atan2(posY,posX)
-                    mover1.anchors.horizontalCenterOffset = - Math.sin(angle1) * backgroundbound
-                    mover1.anchors.verticalCenterOffset = - Math.cos(angle1) * backgroundbound
-                    stickMoved(Math.cos(angle1)*backgroundbound,-Math.sin(angle1)*backgroundbound)
+                    mover1.anchors.horizontalCenterOffset = - Math.cos(angle1) * backgroundbound
+                    mover1.anchors.verticalCenterOffset = - Math.sin(angle1) * backgroundbound
+                    stickMoved(Math.sin(angle1)*backgroundbound,-Math.cos(angle1)*backgroundbound)
                 }
             }
         }

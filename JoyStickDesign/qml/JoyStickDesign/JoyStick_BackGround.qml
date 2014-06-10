@@ -13,7 +13,5 @@ Rectangle {
 
     color: "transparent"
     antialiasing: true
-//    border.width: 3
-//    border.color: "#DF0101"
 
 }
