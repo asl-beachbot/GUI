@@ -15,6 +15,7 @@ from geometry_msgs.msg import PoseStamped
 from geometry_msgs.msg import PointStamped
 from geometry_msgs.msg import Quaternion
 from bb_state.msg import State
+from localization.msg import beach_map
 from tf.transformations import euler_from_quaternion
 
 from flask import Flask, app, render_template
@@ -127,17 +128,24 @@ class WebsocketApp(WebSocketApplication):
 
     def ros_thread(self):
 
-        def pole_subscriber_cb(data):
-            #if bool1 == False:
-            #    return
-            ret2 = {'msg_type': 4, 'x_p':data.point.x, 'y_p':data.point.y}
-            #rospy.loginfo("Pole: \n %s \n %s", data.point.x, data.point.y)
-            self.broadcast_ros(ret2)
-            self.broadcast_rate.sleep()
-            #myint += 1
-            #if ret2['x_p'] == 0.0 and myint > 1:
-            #    bool1 = False
+ #       def pole_subscriber_cb(data):
+ #           #if bool1 == False:
+ #           #    return
+ #           ret2 = {'msg_type': 4, 'x_p':data.point.x, 'y_p':data.point.y}
+ #           #rospy.loginfo("Pole: \n %s \n %s", data.point.x, data.point.y)
+ #           self.broadcast_ros(ret2)
+ #           self.broadcast_rate.sleep()
+ #           #myint += 1
+ #           #if ret2['x_p'] == 0.0 and myint > 1:
+ #           #    bool1 = False
 
+        def pole_subscriber_cb(data):
+            for pole in data.poles:
+                print pole.point.x
+                print pole.point.y
+                ret2 = {'msg_type': 4, 'x_p': pole.point.x,'y_p': pole.point.y}
+                self.broadcast_ros(ret2)
+                self.broadcast_rate.sleep()
 
         def location_subscriber_cb(data):
             quat= data.pose.orientation
@@ -151,7 +159,8 @@ class WebsocketApp(WebSocketApplication):
             self.broadcast_rate.sleep()
 
         #if bool1 == True:
-        rospy.Subscriber("/localization/pole_pos", PointStamped, pole_subscriber_cb, queue_size=4)
+        #rospy.Subscriber("/localization/pole_pos", PointStamped, pole_subscriber_cb, queue_size=4)
+        rospy.Subscriber("/localization/beach_map", beach_map, pole_subscriber_cb, queue_size=1)
 
         rospy.Subscriber("/localization/bot_pose", PoseStamped, location_subscriber_cb, queue_size=1)
 

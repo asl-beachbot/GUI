@@ -16,6 +16,8 @@ Item{
     property bool selected: false
     property var points:[]
     property string path1
+    property string path2
+    property string picture
     property int type: 2
     property var bb
     property var svgOldArr: []
@@ -23,15 +25,13 @@ Item{
 
     function renderToCtx(ctx){
         ctx.save();
-        ctx.path = path1;
+        ctx.path = path2;
         ctx.lineWidth = 2;
         ctx.strokeStyle = "#000000";
         ctx.fillStyle = "#000000";
         ctx.fill();
-        ctx.stroke();
         if(selected){
             ctx.rect(bb.x,bb.y,bb.width, bb.height);
-            ctx.stroke();
         }
         ctx.strokeStyle = "#0000FF";
         ctx.stroke();
@@ -39,13 +39,12 @@ Item{
     }
 
     function getDimensions(){
-        bb = Raphi.pathDimensions(path1);
+        bb = Raphi.pathDimensions(path2);
     }
     function deselectAllNodes(){
         return;
     }
     function updateSvgArr(){
-//        console.log(path1);
         var lengthArr = svgOldArr.length;
         for(var i=0;i<lengthArr;i++){
             var lengthelem = svgOldArr[i].length;
@@ -53,8 +52,7 @@ Item{
                 svgCurArr[i] = svgOldArr[i];
             }
             svgCurArr[i][0] = svgOldArr[i][0]
-                for (var j=1;j<lengthelem;j=j+2)
-                {
+                for (var j=1;j<lengthelem;j=j+2){
                     var currx = svgOldArr[i][j];
                     var curry = svgOldArr[i][j+1];
                     var tmp1 = this.a*(currx-bb.cx) + this.c*(curry-bb.cy) + this.e + bb.cx;
@@ -64,19 +62,15 @@ Item{
                 }
         }
         svgOldArr = svgCurArr;
-        var tmpstr = " ";
-        for(var o=0;o<lengthArr; o++)
-        {
+        var tmpstr = "";
+        for(var o=0;o<lengthArr; o++){
             var lengthelem1 = svgCurArr[o].length;
-            for(var p=0; p<lengthelem1; p++)
-            {
-                tmpstr += svgCurArr[o][p] + " ";
+            for(var p=0; p<lengthelem1; p++){
+                tmpstr += " " + svgCurArr[o][p];
             }
         }
-
-        path1 = tmpstr;
-//        console.log(path1);
-        bb = Raphi.pathDimensions(path1);
+        path2 = tmpstr;
+        bb = Raphi.pathDimensions(path2);
     }
     function pinchStart(){
         //this.currAngle = this.oldAngle;
@@ -87,7 +81,6 @@ Item{
         this.oldAngle = 0;
     }
     function pinchUpdate(scale, rotate1) {
-
         this.currAngle = rotate1/180*Math.PI;
         var diff = rotate1/180*Math.PI - this.oldAngle;
         var diff2  = scale / this.oldScale;
@@ -100,8 +93,6 @@ Item{
         this.f = 0;
         this.oldAngle = this.currAngle;
         this.oldScale = scale;
-//        this.a = scale;
-//        this.d = scale;
     }
     function pinchStop() {
         this.a = 1;
@@ -117,7 +108,12 @@ Item{
         this.f = y_m - bb.cy;
     }
     function importPath(){
-        svgOldArr = Raphi.parsePathString(path1);
-        svgCurArr = Raphi.parsePathString(path1);
+        svgOldArr = Raphi.parsePathString(path2);
+        svgCurArr = Raphi.parsePathString(path2);
+    }
+    function toSVG(){
+        this.path1 = "<path stroke='#000000' ";
+        this.path1 += "d=";
+        this.path1 += "'" + this.path2;
     }
 }

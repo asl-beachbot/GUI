@@ -4,12 +4,11 @@ Item {
     property int lineWidth1: 1
     property var ctx
     property string path1: ""
-    property string svgData: ""
-    property string svgTerminator: "\n</svg>"
-    property var points: [0,0]
+    property var points: []
     property int last_displayed: 0
-    property bool selected: true
+    property bool selected: false
     property bool active: false
+//    property bool pinchActive: false
     property var svgOldArr: []
     property var svgCurArr: []
     property int type: 3
@@ -52,58 +51,52 @@ Item {
         var dy = Math.round(y_a);
         if (this.points.length > 0 && this.points[this.points.length-1].x === dx && this.points[this.points.length-1].y === dy)
             return false;
-        this.points.push({x:dx, y:dy});
-        svgData += ", " + dx + ", " + dx;
-//        path1 += ", " + dx + ", " + dx
+        this.points.push({x: x_a , y: y_a});
         return true;
     }
 
     function mouseStart(x_a,y_a){
-        console.log("Mouse_Start");
         this.points.push({x: x_a, y: y_a});
-        svgData += "\n<path fill='none' stroke='#000000'" + " stroke-width='" + lineWidth1 + "' d='M" + x_a + ", " + y_a + " L" + x_a + ", " + y_a;
-//        path1 += "M" + x_a + ", " + y_a + " L" + x_a + ", " + y_a;
+        console.log("mousestart");
     }
 
     function mouseStop(){
         console.log("Mouse_Stop");
-        //points.length = 0;
         createLine.state = "BUTTON_RELEASED";
         this.active = false;
-        svgData += " '/>";
         last_displayed = 0;
     }
 
     function drawOnCanv(ctx){
-        function stroke(points){
-          if (points.length <= 1)
+        function stroke(points1){
+          if (points1.length <= 1)
               return;
           var start_pos = Math.max(last_displayed-3,0)
-          var p1 = points[start_pos];
-          var p2 = points[start_pos+1];
+          var p1 = points1[start_pos];
+          var p2 = points1[start_pos+1];
           ctx.moveTo(p1.x, p1.y);
-          for (var i = start_pos+1, len = points.length; i < len; i++) {
+          for (var i = start_pos+1, len = points1.length; i < len; i++) {
                 var midPoint = midPointBtw(p1, p2);
                 ctx.quadraticCurveTo(p2.x, p2.y, midPoint.x, midPoint.y);
-                p1 = points[i];
-                p2 = points[i+1];
+                p1 = points1[i];
+                p2 = points1[i+1];
             }
           ctx.stroke();
         }
         ctx.lineWidth = 2;
         ctx.lineJoin = ctx.lineCap = 'round';
         ctx.beginPath();
-        if(lineWidth1 == 1){
+        if(this.lineWidth1 === 1){
             stroke(offsetPoints(-2));
             stroke(offsetPoints(2));
         }
-        else if (lineWidth1 == 2){
+        else if (this.lineWidth1 === 2){
             stroke(offsetPoints(-6));
             stroke(offsetPoints(-2));
             stroke(offsetPoints(2));
             stroke(offsetPoints(6));
         }
-        else if (lineWidth1 == 3){
+        else if (this.lineWidth1 === 3){
             stroke(offsetPoints(-10));
             stroke(offsetPoints(-6));
             stroke(offsetPoints(-2));
@@ -111,7 +104,7 @@ Item {
             stroke(offsetPoints(6));
             stroke(offsetPoints(10));
         }
-        else if(lineWidth1 == 4){
+        else if(this.lineWidth1 === 4){
             stroke(offsetPoints(-14));
             stroke(offsetPoints(-10));
             stroke(offsetPoints(-6));
@@ -121,22 +114,80 @@ Item {
             stroke(offsetPoints(10));
             stroke(offsetPoints(14));
         }
-        this.last_displayed = this.points.length
+        this.last_displayed = points.length
+        console.log("drawcanv");
     }
 
     function renderToCtx(ctx){
-        ctx.save();
-        ctx.beginPath();
-        ctx.lineWidth = 6*lineWidth1;
-        ctx.lineJoin = ctx.lineCap = 'round';
-        ctx.strokeStyle = "#000000";
-        ctx.moveTo(this.points[0].x,this.points[0].y);
-        for(var i=1;i<this.points.length; i++){
-            ctx.lineTo(this.points[i].x, this.points[i].y);
-        }
+        function stroke_inf(points2) {
+          var p1 = points2[0];
+          var p2 = points2[1];
+
+          ctx.beginPath();
+          ctx.moveTo(p1.x, p1.y);
+
+            for (var i = 1, len = points2.length; i < len; i++) {
+                var midPoint = midPointBtw(p1, p2);
+                ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
+                p1 = points2[i];
+                p2 = points2[i+1];
+          }
+        ctx.lineTo(p1.x, p1.y);
         ctx.stroke();
-        ctx.restore();
+        }
+
+        ctx.lineWidth = 2;
+        ctx.lineJoin = ctx.lineCap = 'round';
+
+        if(this.lineWidth1 === 1){
+            stroke_inf(offsetPoints(-2));
+            stroke_inf(offsetPoints(2));
+        }
+        else if (this.lineWidth1 === 2){
+            stroke_inf(offsetPoints(-6));
+            stroke_inf(offsetPoints(-2));
+            stroke_inf(offsetPoints(2));
+            stroke_inf(offsetPoints(6));
+        }
+        else if (this.lineWidth1 === 3){
+            stroke_inf(offsetPoints(-10));
+            stroke_inf(offsetPoints(-6));
+            stroke_inf(offsetPoints(-2));
+            stroke_inf(offsetPoints(2));
+            stroke_inf(offsetPoints(6));
+            stroke_inf(offsetPoints(10));
+        }
+        else if(this.lineWidth1 === 4){
+            stroke_inf(offsetPoints(-14));
+            stroke_inf(offsetPoints(-10));
+            stroke_inf(offsetPoints(-6));
+            stroke_inf(offsetPoints(-2));
+            stroke_inf(offsetPoints(2));
+            stroke_inf(offsetPoints(6));
+            stroke_inf(offsetPoints(10));
+            stroke_inf(offsetPoints(14));
+        }
+//        ctx.save();
+//        ctx.beginPath();
+//        ctx.lineWidth = 6*lineWidth1;
+//        ctx.lineJoin = ctx.lineCap = 'round';
+//        ctx.strokeStyle = "#000000";
+//        ctx.moveTo(this.points[0].x,this.points[0].y);
+//        for(var i=1;i<this.points.length; i++){
+//            ctx.lineTo(this.points[i].x, this.points[i].y);
+//        }
+//        ctx.stroke();
+//        ctx.restore();
     }
+    function toSVG(){
+        this.path1 = "<path fill='none' stroke='#000000' stroke-width='" + this.lineWidth1 + "' ";
+        this.path1 += "d=";
+        this.path1 += "'M" + points[0].x + "," + points[0].y;
+        for(var i = 1; i<points.length; i++){
+            this.path1 += " L" + points[i].x + "," + points[i].y;
+        }
+    }
+
     function deselectAllNodes(){
         return;
     }

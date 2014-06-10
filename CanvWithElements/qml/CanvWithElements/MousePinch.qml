@@ -21,14 +21,12 @@ PinchArea{
 
     onPinchUpdated:{
         mappi.elements.forEach(function(el) {
-            if(el.selected) {
+            if(el.selected){
                     el.pinchUpdate(pinch.scale, pinch.rotation);
-                    el.updateSvgArr();
             }
         });
         mappi.requestPaint();
         mappi.clear();
-        console.log("clear_pinch_up");
     }
     onPinchFinished: {
         mappi.elements.forEach(function(el) {
@@ -39,13 +37,12 @@ PinchArea{
         });
         mappi.requestPaint();
         mappi.clear()
-        console.log("clear_pinch_fi");
     }
     MouseArea{
        id:mousearea
        property int hitrad: 5;
        anchors.fill: parent
-       property var selected_element: 0;
+       property var selected_element: 0
        function trySelect(mouse) {
            var pf = false;
            mappi.elements.forEach(function(el) {
@@ -55,7 +52,6 @@ PinchArea{
                       mouse.y < el.bb.y + el.bb.height + hitrad && mouse.y > el.bb.y - hitrad) {
                             console.log("hit")
                             mappi.clear();
-                            console.log("clear_selec");
                             selected_element = el;
                             pf = true;
                             el.selected = true;
@@ -72,7 +68,6 @@ PinchArea{
                             el2.deselectAllNodes();
                         });
                         mappi.clear();
-                        console.log("clear_select_2");
                         el.selectNode(idx);
                         selected_element = el;
                         pf = true;
@@ -90,28 +85,24 @@ PinchArea{
                });
            }
        }
-       onDoubleClicked: {
-           mappi.elements.forEach(function(el) {
-                if(el.selected){
-                       console.log("clear");
-                       el.path1 = " ";
-                       el.svgCurArr = [];
-                       el.svgOldArr = [];
-                       el.updateSvgArr();
-                       mappi.requestPaint();
-                       mappi.clear();
-                       console.log("clear_dcli");                   
-               }
-           });
-       }
+//       onDoubleClicked: {
+//           mappi.elements.forEach(function(el) {
+//                if(el.selected){
+//                       el.path1 = " ";
+//                       el.svgCurArr = [];
+//                       el.svgOldArr = [];
+//                       el.updateSvgArr();
+//                       mappi.requestPaint();
+//                       mappi.clear();
+//               }
+//           });
+//       }
 
        onClicked:{
            mappi.elements.forEach(function(el){
                trySelect(mouse);
                if(el.selected){
                        createLine.state = "BUTTON_RELEASED";
-                       el.active = false;
-                       console.log("clear_click");
                    }
                mappi.requestPaint();
                mappi.clear();
@@ -119,37 +110,60 @@ PinchArea{
         }
        onPressedChanged:{
            mappi.elements.forEach(function(el){
-               if(el.active){
-                    if (el.state === "RELEASED"){
-                           el.state = "PRESSED";
-                           el.mouseStart(mouseX,mouseY);
-                           console.log("DOWN")
-                       }
-                       else if (el.state == "PRESSED"){
-                           el.state = "RELEASED";
+               if(el.selected){
+                   if(el.state === "RELEASED"){
+                       el.state = "PRESSED";
+                       el.mouseStart();
+                   }
+                   else if(el.state === "PRESSED"){
+                       el.state = "RELEASED"
+                       if(!el.pinchActive){
                            el.mouseStop();
-                           console.log("UP")
+                           el.updateSvgArr();
+                           mappi.requestPaint();
+                           mappi.clear();
                        }
                    }
-           });
+               }
+               if(el.active){
+                   if(el.type === 3){
+                        if (el.state === "RELEASED"){
+                               el.state = "PRESSED";
+                               el.mouseStart(mouseX,mouseY);
+                           }
+                           else if (el.state === "PRESSED"){
+                               el.state = "RELEASED";
+                               el.mouseStop();
+                               mappi.requestPaint();
+                               mappi.clear();
+                           }
+                        }
+                    }
+//               console.log("presschange");
+            });
        }
        onPositionChanged: {
             mappi.elements.forEach(function(el) {
-                    if(el.selected) {
+                    if(el.selected || el.active) {
                         if(el.type === 2){
-                            el.mouseMove(mouse.x, mouse.y);
-                            el.updateSvgArr();
+                            if(!el.pinchActive){
+                                el.mouseMove(mouse.x, mouse.y);
+                            }
                             mappi.requestPaint();
                             mappi.clear();
-                            console.log("clear_pos_cha");
                         }
-                    }
-                    if(el.active){
-                        el.mouseMove(mouse.x,mouse.y);
-                        mappi.requestPaint();
+                        else if(el.type === 3){
+                            el.mouseMove(mouse.x, mouse.y);
+                            mappi.requestPaint();
+                        }
                     }
             });
         }
+//       onReleased: {
+//           mappi.elements.forEach(function(el){
+//               console.log("release");
+//           });
+//       }
     }
 }
 

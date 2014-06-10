@@ -18,6 +18,9 @@ import gevent.monkey
 
 # gevent.monkey.patch_all()
 
+JOY_MESSAGE = 1
+LOCATION_MESSAGE = 2
+
 # Register ros node
 rospy.init_node("server_node", disable_signals=True)
 
@@ -40,6 +43,7 @@ class WebsocketApp(WebSocketApplication):
     def on_message(self, message):
         if message is None:
             return
+        if message.msg_type == JOY_MESSAGE:
         print(message)
 
     def ros_thread(self):
@@ -96,4 +100,3 @@ server.serve_forever()
 # RosGreenlet().spawn()
 # g.start()
 # g.join()
-

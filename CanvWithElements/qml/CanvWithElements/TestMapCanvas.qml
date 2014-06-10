@@ -14,6 +14,7 @@ Canvas {
     property int scale: 80
     property int width1: 600
     property int height1: 600
+    property string svgOutput: " "
     width: width1
     height: height1
     function updateScale()
@@ -185,6 +186,7 @@ Canvas {
             }
             else{
                 el.renderToCtx(ctx);
+                console.log("renderctx");
             }
         });
     }
@@ -209,21 +211,26 @@ Canvas {
 
     onAvailableChanged: {
         if(available) {
-            //elements.push(poly1);
-            //elements.push(poly2);
-//            elements.push(svg1);
-//            elements.push(asd);
-//            updateElements(svg1);
-//            updateElements(asd);
             ctx = mappi.getContext('2d');
         }
     }
     function clear() {
-        console.log("canv_clear");
         ctx.clearRect(0, 0, mappi.width, mappi.height);
+        //console.log("clear");
     }
 
     function exportToSVG() {
+        canvas2.elements.forEach(function(el){
+            svgOutput += "<svg width='" + canvas2.width1 + "' height='" + canvas2.height1 + "'>" + "\n";
+            el.toSVG();
+            svgOutput += el.path1;
+            svgOutput += "'";
+            svgOutput += "/>";
+            svgOutput += "\n";
+            svgOutput += "</svg>";
+//            console.log("type: " + elements[i].type + "\n")
+//            console.log(elements[i].path1 + "\n");
+        });
 
     }
     Component.onCompleted:{

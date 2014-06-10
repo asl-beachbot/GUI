@@ -9,6 +9,7 @@ import threading
 from std_msgs.msg import String
 from sensor_msgs.msg import Joy
 from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PointStamped
 
 from flask import Flask, app, render_template
 
@@ -38,7 +39,7 @@ def remove_duplicates(filename):
     with open(filename) as g:
         for line in g:
             if not len(line.strip()) == 0:            
-                numbers.append([int(n) for n in line.strip().split(' ')])
+                numbers.append([float(n) for n in line.strip().split(' ')])
             elif len(line.strip()) == 0:
                 numbers.append([0,0])
     x_1, y_1 = numbers[0]
@@ -58,7 +59,7 @@ def remove_duplicates(filename):
     print numbers            
 
 class WebsocketApp(WebSocketApplication):
-    broadcast_rate = rospy.Rate(1.0)
+    broadcast_rate = rospy.Rate(25)
     def on_open(self):
         print "Websocket Open"
         #pub2 = rospy.Publisher('joy', Joy)
@@ -69,51 +70,63 @@ class WebsocketApp(WebSocketApplication):
         # self.broadcast_ros(["test"])
 
     def on_message(self, message):
-#        if message is None:
-#            return
-#        elif message is String:
-#            print message
-#            return
-#        else:
-        msg = json.loads(message)
-        #msg1 = Joy()
-        if message is None:
-            return
-        elif msg["msg_type"] == 1:
-            x = msg["x_posi"]
-            y = msg["y_posi"]
-            print x 
-            print y
-            msg1.axes = [0, 0, 0, -float(x), float(y), 0]
-            pub2.publish(msg1)
+        if type(message) is str:
+            msg = json.loads(message)
+            if message is None:
+                return
+            elif msg["msg_type"] == 1:
+                x = msg["x_posi"]
+                y = msg["y_posi"]
+                print x 
+                print y
+                msg1.axes = [-float(x), float(y), 0]
+                pub2.publish(msg1)
 
-        elif msg["msg_type"] == 3:
-            index1 = msg["index"]
-            state1 = msg["pressed"]
-            index2 = int(index1)
-            state2 = int(state1)
-            #msg1.buttons = [0,0,0,0,0,0,0,0,0,0]
+            elif msg["msg_type"] == 3:
+                index1 = msg["index"]
+                state1 = msg["pressed"]
+                index2 = int(index1)
+                state2 = int(state1)
+                #msg1.buttons = [0,0,0,0,0,0,0,0,0,0]
 
-            #msg1.buttons = [a,b,c,d,e,f,g,0,0,0]
-            msg1.buttons[index2-1] = state2
-            print index2
-            print state2
-            pub2.publish(msg1)
-        elif msg["msg_type"] == 2:
-            #print msg["lwidth"]
-            print msg["points"]
-            f = open("asd.txt","w",0)
-            f.write(msg["points"])
-            remove_duplicates("asd.txt")
+                #msg1.buttons = [a,b,c,d,e,f,g,0,0,0]
+                msg1.buttons[index2-1] = state2
+                print index2
+                print state2
+                pub2.publish(msg1)
+            elif msg["msg_type"] == 2:
+                #print msg["lwidth"]
+                print msg["points"]
+                f = open("asd.txt","w",0)
+                f.write(msg["points"])
+                remove_duplicates("asd.txt")
+            else:
+                #print message
+                return
         else:
-            #print message
             return
 
     def ros_thread(self):
+        #global bool1, myint
+        #bool1 = True
+        #myint = 0
+
+        def pole_subscriber_cb(data):
+            #if bool1 == False:
+            #    return
+            ret2 = {'msg_type': 4, 'x_p':data.point.x, 'y_p':data.point.y}
+            rospy.loginfo("Pole: \n %s \n %s", data.point.x, data.point.y)
+            self.broadcast_ros(ret2)
+            self.broadcast_rate.sleep()
+            #myint += 1
+            #if ret2['x_p'] == 0.0 and myint > 1:
+            #    bool1 = False
+
+
         def location_subscriber_cb(data):
-            ret = [data.pose.position.x, data.pose.position.y] #data.pose.orientation.w]
+            ret1 = {'msg_type': 5, 'x_l':data.pose.position.x, 'y_l':data.pose.position.y}
             rospy.loginfo("Location: \n %s \n %s", data.pose.position.x, data.pose.position.y)
-            self.broadcast_ros(ret)
+            self.broadcast_ros(ret1)
             self.broadcast_rate.sleep()
             #print data.pose.position.x
             #print data.pose.position.y
@@ -122,7 +135,12 @@ class WebsocketApp(WebSocketApplication):
             #print data.pose.orientation.z
             #print data.pose.orientation.w
 
+        #if bool1 == True:
+        rospy.Subscriber("/localization/pole_pos", PointStamped, pole_subscriber_cb, queue_size=4)
+
         rospy.Subscriber("/localization/bot_pose", PoseStamped, location_subscriber_cb, queue_size=1)
+
+
         rospy.loginfo("starting ros thread")
         print "starting ros thread"
         #print data.pose.position.x
