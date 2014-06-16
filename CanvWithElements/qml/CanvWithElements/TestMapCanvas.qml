@@ -17,10 +17,8 @@ Canvas {
     property string svgOutput: " "
     width: width1
     height: height1
-    function updateScale()
-    {
-        for(var i = 0; i<20; i++)
-        {
+    function updateScale(){
+        for(var i = 0; i<20; i++){
             polesMaxXun = getMax(poles[i].x,polesMaxXun)
             polesMaxYun = getMax(poles[i].y,polesMaxYun)
             polesMinXun = getMin(poles[i].x,polesMinXun)
@@ -92,10 +90,8 @@ Canvas {
         }
     }
 
-    function updatemap()
-    {
-        for(var i=0; i < 20; i++)
-        {
+    function updatemap(){
+        for(var i=0; i < 20; i++){
             polesMaxX = getMax(poles[i].x*scale,polesMaxX)
             polesMaxY = getMax(poles[i].y*scale,polesMaxY)
             polesMinX = getMin(poles[i].x*scale,polesMinX)
@@ -160,20 +156,20 @@ Canvas {
         width1 = Math.abs(polesMaxX - polesMinX + 2*offset);
         height1 = Math.abs(polesMaxY - polesMinY + 2*offset);
     }
-    Rectangle{
-        id: recti
-        color: "green"
-        height: 60
-        width: 30
-        smooth:true
-        antialiasing: true
-        transform: Rotation{
-            angle: -angle1
-        }
-        x: posiX
-        y: posiY
-        z:8
-    }
+//    Rectangle{
+//        id: recti
+//        color: "green"
+//        height: 60
+//        width: 30
+//        smooth:true
+//        antialiasing: true
+//        transform: Rotation{
+//            angle: -angle1
+//        }
+//        x: posiX
+//        y: posiY
+//        z:8
+//    }
 
     onPaint: {
         ctx = canvas2.getContext('2d');
@@ -220,17 +216,15 @@ Canvas {
     }
 
     function exportToSVG() {
+        svgOutput += "<svg width='" + canvas2.width1 + "' height='" + canvas2.height1 + "'>" + "\n";
         canvas2.elements.forEach(function(el){
-            svgOutput += "<svg width='" + canvas2.width1 + "' height='" + canvas2.height1 + "'>" + "\n";
-            el.toSVG();
-            svgOutput += el.path1;
-            svgOutput += "'";
-            svgOutput += "/>";
-            svgOutput += "\n";
-            svgOutput += "</svg>";
-//            console.log("type: " + elements[i].type + "\n")
-//            console.log(elements[i].path1 + "\n");
+                el.toSVG();
+                svgOutput += el.path1;
+                svgOutput += "'";
+                svgOutput += "/>";
+                svgOutput += "\n";
         });
+        svgOutput += "</svg>";
 
     }
     Component.onCompleted:{

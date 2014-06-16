@@ -13,6 +13,10 @@ Item {
     property var svgCurArr: []
     property int type: 3
 
+    property string path2: ""
+    property real currTransXImg: 0
+    property real currTransYImg: 0
+
     state: "RELEASED"
 
     function normalvector(po1,po2){

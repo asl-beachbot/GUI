@@ -10,7 +10,6 @@ Rectangle{
     property real angle1
     property var polesX: []
     property var polesY: []
-    property int sTATE_MESSAGE_TYPE: 6
     property int pING_MESSAGE_TYPE: 8
     property int offset: 50
     property string state1: "RELEASED"
@@ -49,7 +48,7 @@ Rectangle{
                          }
         active: false
     }
-    RakeBox2{
+    RakeBox{
         id: rakie
         z:10
         anchors{
@@ -76,15 +75,15 @@ Rectangle{
         lightlength: screen.height-300
     }
 
-    Button4{
+    ButtonMain{
         z:6
         id: upi
         buttonLabel: "push"
+        buttonColor: "transparent"
         anchors.top: screen.top
         anchors.left: screen.left
         anchors.topMargin: 35
         anchors.leftMargin: 530
-//        buttonColor: "green"
         buttonHeight: 100
         buttonWidth: 100
         radius: 100
@@ -109,15 +108,15 @@ Rectangle{
         z: 6
     }
 
-    Button4{
+    ButtonMain{
         z:6
         id: downi
         buttonLabel: "lift"
+        buttonColor: "transparent"
         anchors.bottom: screen.bottom
         anchors.left: screen.left
         anchors.bottomMargin: 110
         anchors.leftMargin: 250
-//        buttonColor: "green"
         buttonHeight: 100
         buttonWidth: 100
         radius: 100
@@ -142,7 +141,7 @@ Rectangle{
         z: 6
     }
 
-    Button4{
+    ButtonMain{
         z:6
         id: refresh
         buttonLabel: "refresh"
@@ -157,7 +156,7 @@ Rectangle{
 
     }
 
-    JoyWebSocket{
+    JoyStick{
         z:10
         anchors.right: parent.right
         anchors.rightMargin: 88
@@ -180,22 +179,13 @@ Rectangle{
         color: "transparent"
         radius: 3
         border.width: 4
-        TestMap3{
+        TestMap{
             z:10
             id: mappi
             anchors.centerIn: parent
             width1: mapContainer.width
             height1: mapContainer.height
         }
-//        DrawingArea{
-//            id:drawthis
-//            z:11
-//            anchors.centerIn: mappi
-//            width2: mappi.width - 2*offset
-//            height2: mappi.height - 2*offset
-//            fieldx: mappi.polesMaxXun - mappi.polesMinXun
-//            fieldy: mappi.polesMaxYun - mappi.polesMinYun
-//        }
 
         Rectangle{
             z:5

@@ -67,7 +67,7 @@ Rectangle{
         boxlength: screen.height-300
     }
 
-    LightBox{
+    LightBox2{
         z:10
         id: lighti
         anchors{

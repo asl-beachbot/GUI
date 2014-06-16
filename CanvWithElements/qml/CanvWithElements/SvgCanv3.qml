@@ -25,6 +25,9 @@ Item{
     property var svgOldArr: []
     property var svgCurArr: []
 
+    property real currTransXImg
+    property real currTransYImg
+
     state: "RELEASED"
 
     function resetTrafo1(){

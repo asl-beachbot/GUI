@@ -3,43 +3,30 @@ import QtQuick 2.0
 
 Rectangle {
     id: button
-    property int buttonHeight: 100
-    property int buttonWidth: 100
+    property int buttonHeight: 66
+    property int buttonWidth: 66
     property string label
     property real labelSize: 14
+    property color buttonColor: "transparent"
+    property string buttonLabel
 
-    property color buttonColor: "lightblue"
-    property color onHoverColor: "gold"
-    property color borderColor: "white"
-
-    radius: 100
+    radius: 66
     antialiasing: true
+    border.color: "transparent"
     border.width: 2
-    border.color: borderColor
     width: buttonWidth
     height: buttonHeight
-
-    Text{
-        id: buttonLabel
-        anchors.centerIn: parent
-        text: label
-        color: "#DCDCCC"
-        font.pointSize: labelSize
-    }
 
     signal buttonClick()
 
     onButtonClick: {
-        console.log(buttonLabel.text + " clicked")
+        console.log(buttonLabel + " clicked")
     }
 
     MouseArea{
         id: buttonMouseArea
         onClicked: buttonClick()
         anchors.fill: parent
-        hoverEnabled: true
-        onEntered: parent.border.color = onHoverColor
-        onExited:  parent.border.color = borderColor
     }
 
     // Determines the color of the button by using the conditional operator

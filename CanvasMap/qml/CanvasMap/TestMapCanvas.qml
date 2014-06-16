@@ -23,10 +23,10 @@ Canvas{
     {
         for(var i = 0; i<20; i++)
         {
-            polesMaxXun = getMax(poles[i].x,polesMaxXun)
-            polesMaxYun = getMax(poles[i].y,polesMaxYun)
-            polesMinXun = getMin(poles[i].x,polesMinXun)
-            polesMinYun = getMin(poles[i].y,polesMinYun)
+            polesMaxXun = getMax(polesX[i],polesMaxXun)
+            polesMaxYun = getMax(polesY[i],polesMaxYun)
+            polesMinXun = getMin(polesX[i],polesMinXun)
+            polesMinYun = getMin(polesY[i],polesMinYun)
         }
         var lengthX = Math.abs(polesMaxXun - polesMinXun)
         var lengthY = Math.abs(polesMaxYun - polesMinYun)
@@ -98,13 +98,13 @@ Canvas{
     {
         for(var i=0; i < 20; i++)
         {
-            polesMaxX = getMax(poles[i].x*scale,polesMaxX)
-            polesMaxY = getMax(poles[i].y*scale,polesMaxY)
-            polesMinX = getMin(poles[i].x*scale,polesMinX)
-            polesMinY = getMin(poles[i].y*scale,polesMinY)
+            polesMaxX = getMax(polesX[i]*scale,polesMaxX)
+            polesMaxY = getMax(polesY[i]*scale,polesMaxY)
+            polesMinX = getMin(polesX[i]*scale,polesMinX)
+            polesMinY = getMin(polesY[i]*scale,polesMinY)
             if(polesMinX == 0.0 && polesMinY == 0.0){
                 ctx.beginPath();
-                ctx.arc(poles[i].x*scale + offset,height1 - poles[i].y*scale - offset,20,0,2*Math.PI,false);
+                ctx.arc(polesX[i]*scale + offset,height1 - polesY[i]*scale - offset,20,0,2*Math.PI,false);
                 ctx.fillStyle = "#FF4000";
                 ctx.fill();
                 ctx.lineWidth = 2;
@@ -112,13 +112,13 @@ Canvas{
                 ctx.stroke();
                 ctx.beginPath();
                 ctx.fillStyle = "#000000";
-                ctx.arc(poles[i].x*scale + offset,height1 - poles[i].y*scale - offset,5,0,2*Math.PI,false)
+                ctx.arc(polesX[i]*scale + offset,height1 - polesY[i]*scale - offset,5,0,2*Math.PI,false)
                 ctx.fill();
                 ctx.stroke();
             }
             else if(polesMinX <= 0.0 && polesMinY == 0.0){
                 ctx.beginPath();
-                ctx.arc(poles[i].x*scale + offset - polesMinX,height1 - poles[i].y*scale - offset,20,0,2*Math.PI,false);
+                ctx.arc(polesX[i]*scale + offset - polesMinX,height1 - polesY[i]*scale - offset,20,0,2*Math.PI,false);
                 ctx.fillStyle = "#FF4000";
                 ctx.fill();
                 ctx.lineWidth = 2;
@@ -126,13 +126,13 @@ Canvas{
                 ctx.stroke();
                 ctx.beginPath();
                 ctx.fillStyle = "#000000";
-                ctx.arc(poles[i].x*scale + offset - polesMinX,height1 - poles[i].y*scale - offset,5,0,2*Math.PI,false)
+                ctx.arc(polesX[i]*scale + offset - polesMinX,height1 - polesY[i]*scale - offset,5,0,2*Math.PI,false)
                 ctx.fill();
                 ctx.stroke();
             }
             else if(polesMinX == 0.0 && polesMinY <= 0.0){
                 ctx.beginPath();
-                ctx.arc(poles[i].x*scale + offset,height1 - poles[i].y*scale - offset + polesMinY,20,0,2*Math.PI,false);
+                ctx.arc(polesX[i]*scale + offset,height1 - polesY[i]*scale - offset + polesMinY,20,0,2*Math.PI,false);
                 ctx.fillStyle = "#FF4000";
                 ctx.fill();
                 ctx.lineWidth = 2;
@@ -140,13 +140,13 @@ Canvas{
                 ctx.stroke();
                 ctx.beginPath();
                 ctx.fillStyle = "#000000";
-                ctx.arc(poles[i].x*scale + offset,height1 - poles[i].y*scale - offset + polesMinY,5,0,2*Math.PI,false)
+                ctx.arc(polesX[i]*scale + offset,height1 - polesY[i]*scale - offset + polesMinY,5,0,2*Math.PI,false)
                 ctx.fill();
                 ctx.stroke();
             }
             else if(polesMinX <= 0.0 && polesMinY <= 0.0){
                 ctx.beginPath();
-                ctx.arc(poles[i].x*scale + offset - polesMinX,height1 - poles[i].y*scale - offset + polesMinY,20,0,2*Math.PI,false);
+                ctx.arc(polesX[i]*scale + offset - polesMinX,height1 - polesY[i]*scale - offset + polesMinY,20,0,2*Math.PI,false);
                 ctx.fillStyle = "#FF4000";
                 ctx.fill();
                 ctx.lineWidth = 2;
@@ -154,7 +154,7 @@ Canvas{
                 ctx.stroke();
                 ctx.beginPath();
                 ctx.fillStyle = "#000000";
-                ctx.arc(poles[i].x*scale + offset - polesMinX,height1 - poles[i].y*scale - offset + polesMinY,5,0,2*Math.PI,false)
+                ctx.arc(polesX[i]*scale + offset - polesMinX,height1 - polesY[i]*scale - offset + polesMinY,5,0,2*Math.PI,false)
                 ctx.fill();
                 ctx.stroke();
             }
@@ -162,20 +162,19 @@ Canvas{
         width1 = Math.abs(polesMaxX - polesMinX + 2*offset);
         height1 = Math.abs(polesMaxY - polesMinY + 2*offset);
     }
-    Rectangle{
+    Image{
         id: recti
-        color: "green"
-        height: 60
-        width: 30
-        smooth:true
-        antialiasing: true
-        transform: Rotation{
-            angle: -angle1
-        }
-
-        //radius: 25
+        height: 100
+        width: 100
+        source: "../pics/box-turtle1.png"
+        fillMode: Image.Stretch
         x: posiX
         y: posiY
+        transform: Rotation{
+            angle: 90 - angle1
+            origin.x: 0.5*recti.width
+            origin.y: 0.5*recti.height
+        }
         z:8
     }
 
@@ -183,13 +182,12 @@ Canvas{
         ctx = canvas2.getContext('2d');
         updateScale();
         updatemap();
-        poles = [];
+        //poles = [];
     }
 
     Rectangle{
         id: recti2
         color: "#FAFEBE"
-        border.color: "yellow"
         opacity: 0.7
         height: canvas2.height1 - 2*offset
         width: canvas2.width1 - 2*offset

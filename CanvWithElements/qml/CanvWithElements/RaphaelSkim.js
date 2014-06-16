@@ -506,7 +506,6 @@ function pathDimensions(path) {
             cx: xmin + width / 2,
             cy: ymin + height / 2
         };
-    // pth.bbox = clone(bb);
     return bb;
 };
 function inBBox(bbox, x, y) {

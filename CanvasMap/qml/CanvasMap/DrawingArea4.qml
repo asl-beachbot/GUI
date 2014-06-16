@@ -1,16 +1,14 @@
 import QtQuick 2.0
 
 Canvas {
-    //width: 1000; height: 1000
     id: myCanvas
-    property int lineWidth1: 1
+    property int lineWidth2
     property int posX
     property int posY
     property color drawColor: "#FF4000"
     property var ctx
+    property int lw
     property string sdata: ""
-    property string svgData: ""
-    property string svgTerminator: "\n</svg>"
     property var points: []
     property int last_displayed: 0
     property int height2
@@ -23,15 +21,27 @@ Canvas {
 
     state: "RELEASED"
 
-    function init()
-    {
-        svgData =  "<?xml version='1.0'?>\n<svg>";
-        //updateText(true);
-        //Data = lineWidth;
+    function getHex(lwidth){
+        if(lwidth === 1){
+            lw = 8;
+        }
+        if(lwidth === 2){
+            lw = 28;
+        }
+        if(lwidth === 3){
+            lw = 62;
+        }
+        if(lwidth === 4){
+            lw = 127;
+        }
+        lineWidth2 = lw;
     }
 
-    function normalvector(po1,po2)
-    {
+    function clear() {
+        ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+    }
+
+    function normalvector(po1,po2){
         var normalvector1 = [];
         var v1x = po1.y-po2.y;
         var v1y = po2.x-po1.x;
@@ -41,16 +51,14 @@ Canvas {
         return normalvector1;
     }
 
-    function midPointBtw(p1,p2)
-    {
+    function midPointBtw(p1,p2){
         return{
             x: p1.x + (p2.x - p1.x)*0.5,
             y: p1.y + (p2.y - p1.y)*0.5
         };
     }
 
-    function offsetPoints(val)
-    {
+    function offsetPoints(val){
         var offsetPoints = [];
         var p1 = points[0];
         var p2 = points[1];
@@ -64,12 +72,10 @@ Canvas {
             p1 = points[i];
             p2 = points[i+1];
         }
-
         return offsetPoints;
     }
 
-    function _MouseMoveHandler(x_a,y_a)
-    {
+    function _MouseMoveHandler(x_a,y_a){
         var dx = Math.round(x_a);
         var dy = Math.round(y_a);
         if (points.length > 0 && points[points.length-1].x === dx && points[points.length-1].y === dy)
@@ -77,36 +83,29 @@ Canvas {
         points.push({x:dx, y:dy});
         var x_coord = (fieldx*x_a)/(width2) + mappi.polesMinXun;
         var y_coord = fieldy*(height2 - y_a)/(height2);
-        sdata += x_coord + " " + y_coord + "\n";
-        svgData += ", " + x_coord + ", " + y_coord;
+        sdata += x_coord + " " + y_coord + " " + lw + "\n";
         return true;
     }
 
-    function _MouseDownHandler()
-    {
-        //var dx = Math.round(posX);
-        //var dy = Math.round(posY);
+    function _MouseDownHandler(){
         points.push({x: posX, y: posY});
         var x_coord1 = (fieldx*posX)/(width2) + mappi.polesMinXun;
         var y_coord1 = fieldy*(height2 - posY)/(height2);
-        //svgData += "downdowndown"
-        svgData += "\n<path fill='none' stroke='#000000'" + " stroke-width='" + lineWidth1 + "' d='M" + x_coord1  + ", " + y_coord1  + " L" + x_coord1  + ", " + y_coord1;
+        getHex(lineWidth1);
     }
 
-    function _MouseUpHandler()
-    {
-        //var dx = Math.round(mousearea.mouseX);
-        //var dy = Math.round(mousearea.mouseY);
-        points.length = 0;
-        sdata += "\n";
-        svgData += " '/>";
+    function _MouseUpHandler(x_b,y_b){
+        var x_coord = (fieldx*x_b)/(width2) + mappi.polesMinXun;
+        var y_coord = fieldy*(height2 - y_b)/(height2);
+//        sdata += x_coord + " " + y_coord + " " + lw;
+        sdata = sdata.substring(0,sdata.length - 1);
         last_displayed = 0;
-        console.log(sdata)
+        console.log(sdata);
+        points.length = 0;
     }
 
     onPaint: {
-        function stroke(points) {
-
+        function stroke(points){
           if (points.length <= 1)
               return;
           var start_pos = Math.max(last_displayed-3,0)
@@ -116,20 +115,12 @@ Canvas {
 
           ctx.moveTo(p1.x, p1.y);
 
-            // TODO:use quadratic properly
           for (var i = start_pos+1, len = points.length; i < len; i++) {
-                // we pick the point between pi+1 & pi+2 as the
-                // end point and p1 as our control point
                 var midPoint = midPointBtw(p1, p2);
                 ctx.quadraticCurveTo(p2.x, p2.y, midPoint.x, midPoint.y);
                 p1 = points[i];
                 p2 = points[i+1];
-                // TODO: make sure the access is not out of bounds
             }
-          // Draw last line as a straight line while
-          // we wait for the next point to be able to calculate
-          // the bezier control point
-          //ctx.lineTo(p1.x, p1.y);
           ctx.stroke();
         }
 
@@ -137,20 +128,17 @@ Canvas {
         ctx.lineWidth = 2;
         ctx.lineJoin = ctx.lineCap = 'round';
         ctx.beginPath();
-        if(lineWidth1 == 1)
-        {
+        if(lineWidth1 == 1){
             stroke(offsetPoints(-2));
             stroke(offsetPoints(2));
         }
-        else if (lineWidth1 == 2)
-        {
+        else if (lineWidth1 == 2){
             stroke(offsetPoints(-6));
             stroke(offsetPoints(-2));
             stroke(offsetPoints(2));
             stroke(offsetPoints(6));
         }
-        else if (lineWidth1 == 3)
-        {
+        else if (lineWidth1 == 3){
             stroke(offsetPoints(-10));
             stroke(offsetPoints(-6));
             stroke(offsetPoints(-2));
@@ -158,8 +146,7 @@ Canvas {
             stroke(offsetPoints(6));
             stroke(offsetPoints(10));
         }
-        else if(lineWidth1 == 4)
-        {
+        else if(lineWidth1 == 4){
             stroke(offsetPoints(-14));
             stroke(offsetPoints(-10));
             stroke(offsetPoints(-6));
@@ -182,18 +169,16 @@ Canvas {
                 requestPaint()
         }
         onPressedChanged: {
-            if (myCanvas.state == "RELEASED")
-            {
+            posX = mouseX
+            posY = mouseY
+            if (myCanvas.state == "RELEASED"){
                 myCanvas.state = "PRESSED"
-                posX = mouseX
-                posY = mouseY
                 _MouseDownHandler()
                 console.log("DOWN")
             }
-            else if (myCanvas.state == "PRESSED")
-            {
+            else if (myCanvas.state == "PRESSED"){
                 myCanvas.state = "RELEASED"
-                _MouseUpHandler()
+                _MouseUpHandler(posX,posY)
                 console.log("UP")
             }
         }

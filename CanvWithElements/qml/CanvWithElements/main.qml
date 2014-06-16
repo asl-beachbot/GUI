@@ -44,7 +44,7 @@ Rectangle {
                          } else if (socket2.status == WebSocket.Closed) {
                              //messageBox.text += "\nSocket closed"
                          }
-        active: false
+        active: true
     }
     Button4{
         property int linewidth3: 1
@@ -116,7 +116,6 @@ Rectangle {
         }
         id: actionContainer
         spacing: 30
-
         Button4{
             buttonColor: "red"
             label: "Figure"
@@ -134,14 +133,14 @@ Rectangle {
             }
         }
 
-        Button4{
-            buttonColor: "green"
-            label: "Mickey"
-            onButtonClick:{
-                createLine.state = "BUTTON_RELEASED";
-                createStuff("Mickey.qml",svg_mic);
-            }
-        }
+//        Button4{
+//            buttonColor: "green"
+//            label: "Mickey"
+//            onButtonClick:{
+//                createLine.state = "BUTTON_RELEASED";
+//                createStuff("Mickey.qml",svg_mic);
+//            }
+//        }
 
         Button4{
             buttonColor: "yellow"
@@ -178,19 +177,19 @@ Rectangle {
         spacing: 30
         Button4{
             buttonColor: "red"
-            label: "Delete"
+            label: "Delete All"
             onButtonClick: {
                 mappi.elements.forEach(function(el) {
-                    el.path1 = " ";
+                    el.path2 = "";
+                    el.path1 = "";
                     el.svgCurArr = [];
                     el.svgOldArr = [];
                     el.updateSvgArr();
                     el.selected = false;
                     el.points = [];
                     el.active = false;
-                    el.currTransX2Curr = 6000;
-                    el.currTransY2Curr = 6000;
-//                    el.state = "RELEASED";
+                    el.currTransXImg = 6000;
+                    el.currTransYImg = 6000;
                 });
                 mappi.svgOutput = " ";
                 mappi.requestPaint();
@@ -199,13 +198,15 @@ Rectangle {
                 svg_fig = [];
                 svg_mic = [];
                 line_arr = [];
+                star = [];
+                svg_head = [];
                 mappi.elements = [];
                 console.log("clear");
             }
         }
         Button4{
             buttonColor: "green"
-            label: "Show"
+            label: "Send"
             onButtonClick:{
                 mappi.exportToSVG();
                 if(socket2.active){
@@ -223,8 +224,26 @@ Rectangle {
             }
         }
         Button4{
-            buttonColor: "blue"
-            label: "3"
+            buttonColor: "red"
+            label: "Delete Element"
+            onButtonClick:{
+                mappi.elements.forEach(function(el) {
+                     if(el.selected){
+                        el.path2 = "";
+                        el.path1 = "";
+                        el.svgCurArr = [];
+                        el.svgOldArr = [];
+                        el.updateSvgArr();
+                        el.currTransXImg = 6000;
+                        el.currTransYImg = 6000;
+                        el.selected = false;
+                        el.points = [];
+                        el.active = false;
+                    }
+                });
+                mappi.requestPaint();
+                mappi.clear();
+            }
         }
     }
     Rectangle{

@@ -21,4 +21,12 @@ include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
 qtcAddDeployment()
 
 OTHER_FILES += \
-    qml/JoyStickDesign/LightBox.qml
+    qml/JoyStickDesign/TestMap.qml \
+    qml/JoyStickDesign/RakeBox.qml \
+    qml/JoyStickDesign/LightBox.qml \
+    qml/JoyStickDesign/ButtonMain.qml \
+    qml/JoyStickDesign/ButtonLight.qml \
+    qml/JoyStickDesign/ButtonRake.qml \
+    qml/JoyStickDesign/JoyStickBack.qml \
+    qml/JoyStickDesign/JoyStickMover.qml \
+    qml/JoyStickDesign/JoyStick.qml

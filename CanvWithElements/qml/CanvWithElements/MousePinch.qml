@@ -5,7 +5,6 @@ PinchArea{
     id: pinchArea
     enabled: true
     anchors.fill: mappi
-
     pinch.dragAxis: Pinch.NoDrag
     pinch.minimumScale: 0.0001
     pinch.maximumScale: 1000
@@ -31,7 +30,7 @@ PinchArea{
     onPinchFinished: {
         mappi.elements.forEach(function(el) {
             if(el.selected){
-                    el.pinchStop();
+                    el.pinchStop(pinch.scale, pinch.rotation);
                     el.updateSvgArr();
             }
         });
@@ -85,19 +84,6 @@ PinchArea{
                });
            }
        }
-//       onDoubleClicked: {
-//           mappi.elements.forEach(function(el) {
-//                if(el.selected){
-//                       el.path1 = " ";
-//                       el.svgCurArr = [];
-//                       el.svgOldArr = [];
-//                       el.updateSvgArr();
-//                       mappi.requestPaint();
-//                       mappi.clear();
-//               }
-//           });
-//       }
-
        onClicked:{
            mappi.elements.forEach(function(el){
                trySelect(mouse);
@@ -113,12 +99,12 @@ PinchArea{
                if(el.selected){
                    if(el.state === "RELEASED"){
                        el.state = "PRESSED";
-                       el.mouseStart();
+                       el.mouseStart(mouseX,mouseY);
                    }
                    else if(el.state === "PRESSED"){
                        el.state = "RELEASED"
                        if(!el.pinchActive){
-                           el.mouseStop();
+                           el.mouseStop(mouseX,mouseY);
                            el.updateSvgArr();
                            mappi.requestPaint();
                            mappi.clear();
@@ -133,7 +119,7 @@ PinchArea{
                            }
                            else if (el.state === "PRESSED"){
                                el.state = "RELEASED";
-                               el.mouseStop();
+                               el.mouseStop(mouseX,mouseY);
                                mappi.requestPaint();
                                mappi.clear();
                            }

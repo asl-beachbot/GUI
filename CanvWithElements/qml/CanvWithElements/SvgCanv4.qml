@@ -9,25 +9,29 @@ Item{
     property real d: 1;
     property real e: 0;
     property real f: 0;
+
     property bool active: false
     property bool selected: false
     property bool pinchActive: false
-    property real currTransX1: 0
-    property real currTransX2Old: 580 + offset + bb.cx
-    property real currTransX2Curr: 580 + offset + bb.cx
-    property real currTransY1: 0
-    property real currTransY2Old: offset + 25 + bb.cy
-    property real currTransY2Curr: offset + 25 + bb.cy
-    property real angle1:0
-    property real angle2Old:0
-    property real angle2Curr:0
-    property real scale1:1
-    property real scale2Old:1
-    property real scale2Curr:1
+
+    property real shiftOriginX: offset + 580
+    property real currTransXSVG: 0
+    property real currTransXImg: shiftOriginX
+    property real shiftOriginY: offset + 26
+    property real currTransYSVG: 0
+    property real currTransYImg: shiftOriginY
+
+    property real angleSVG:0
+    property real oldAngleImg:0
+    property real currAngleImg:0
+    property real scaleSVG:1
+    property real oldScaleImg:1
+    property real currScaleImg:1
+
     property var points:[]
     property string path1
     property string path2: ""
-    property string picture
+
     property int type: 2
     property var bb
     property var bb_old
@@ -37,24 +41,37 @@ Item{
 
     Image{
         id: svg1
+        x: currTransXImg
+        y: currTransYImg
+//        width: bb.width
+//        height: bb.height
         source: imageSource1
-        anchors.centerIn: parent
+//        fillMode: Image.Stretch
         transform{
-            Scale{origin.x: bb_old.cx; origin.y: bb_old.cy; xScale: scale2Curr; yScale: scale2Curr}
-            Rotation{origin.x: bb_old.cx; origin.y: bb_old.cy; angle: angle2Curr}
-            Translate{x: currTransX2Curr; y: currTransY2Curr}
+//            Scale{origin.x: svg1.width*0.5; origin.y: svg1.height*0.5; xScale: currScaleImg; yScale: currScaleImg}
+//            Rotation{origin.x: svg1.width*0.5; origin.y: svg1.height*0.5; angle: currAngleImg}
+//            Translate{x: currTransXImg; y: currTransYImg}
+            Scale{origin.x: bb.cx; origin.y: bb.cy; xScale: currScaleImg; yScale: currScaleImg}
+            Rotation{origin.x: bb.cx; origin.y: bb.cy; angle: currAngleImg}
         }
     }
 
     state: "RELEASED"
 
-    function resetTrafo1(){
-        this.a = 1;
-        this.b = 0;
-        this.c = 0;
-        this.d = 1;
-        this.e = 0;
-        this.f = 0;
+    function setMatrix(scale,angle,transX,transY){
+        this.a = scale*Math.cos(angle);
+        this.c = -scale*Math.sin(angle);
+        this.b = scale*Math.sin(angle);
+        this.d = scale*Math.cos(angle);
+        this.e = transX;
+        this.f = transY;
+    }
+
+    function resetValues(){
+        this.currTransXSVG = 0;
+        this.currTransYSVG = 0;
+        this.angleSVG = 0;
+        this.scaleSVG = 1;
     }
 
     function renderToCtx(ctx){
@@ -70,16 +87,14 @@ Item{
         ctx.strokeStyle = "red";
         ctx.stroke();
         ctx.restore();
-        resetTrafo1();
+    }
+    function drawOnCanv(){
+
     }
 
     function getDimensions(){
         bb = Raphi.pathDimensions(path2);
         bb_old = Raphi.pathDimensions(path2);
-    }
-
-    function update_bb(){
-        bb_old = bb
     }
 
     function deselectAllNodes(){
@@ -112,71 +127,62 @@ Item{
         }
         path2 = tmpstr;
         bb = Raphi.pathDimensions(path2);
-        console.log("finished_calc");
     }
     function pinchStart(){
         this.active = true;
         this.pinchActive = true;
-        //update_bb();
         console.log("Pinchstart");
     }
     function pinchUpdate(scale, rotate1) {
-        this.angle1 = rotate1/180*Math.PI;
-        this.angle2Curr = this.angle2Old+rotate1
-        this.scale1 = scale;
-        this.scale2Curr = scale*this.scale2Old;
+        this.currAngleImg = this.oldAngleImg+rotate1;
+        this.currScaleImg = scale*this.oldScaleImg;
+        console.log(bb.x);
     }
 
-    function pinchStop() {
-        this.a = this.scale1*Math.cos(this.angle1);
-        this.c = -this.scale1*Math.sin(this.angle1);
-        this.b = this.scale1*Math.sin(this.angle1);
-        this.d = this.scale1*Math.cos(this.angle1);
-        this.e = this.currTransX1;
-        this.f = this.currTransY1;
+    function pinchStop(scale,rotate1) {
+        this.angleSVG = rotate1/180*Math.PI;
+        this.scaleSVG = scale;
+        this.currAngleImg = this.oldAngleImg+rotate1
+        this.currScaleImg = scale*this.oldScaleImg;
+
+        setMatrix(this.scaleSVG,this.angleSVG,this.currTransXSVG, this.currTransYSVG)
+
         this.active = false;
         this.pinchActive = false;
-        this.currTransX1 = 0;
-        this.currTransY1 = 0;
-        this.angle1 = 0;
-        this.angle2Old = this.angle2Curr;
-        this.scale1 = 1;
-        this.scale2Old = this.scale2Curr;
+
+        resetValues();
+
+        this.oldAngleImg = this.currAngleImg;
+        this.oldScaleImg = this.currScaleImg;
+
         console.log("Pinchstop");
     }
 
-    function mouseStart(){
-//        this.a = 1;
-//        this.c = 0;
-//        this.b = 0;
-//        this.d = 1;
-//        this.e = 0;
-//        this.f = 0;
+    function mouseStart(x_m,y_m){
         this.active = true;
         console.log("mousestart");
     }
 
     function mouseMove(x_m,y_m){
-        this.currTransX1 = x_m - bb.cx
-        this.currTransX2Curr = this.currTransX2Old + x_m - bb.cx;
-        this.currTransY1 = y_m - bb.cy
-        this.currTransY2Curr = this.currTransY2Old +  y_m - bb.cy;
+        this.currTransXSVG = x_m - bb.cx
+        this.currTransYSVG = y_m - bb.cy
+        console.log( "Mousemove " + bb.x);
+        this.currTransXImg = this.shiftOriginX + x_m - bb.width*0.5;
+        this.currTransYImg = this.shiftOriginY + y_m - bb.height*0.5;
     }
-    function mouseStop(){
-        this.a = 1;
-        this.c = 0;
-        this.b = 0;
-        this.d = 1;
-        this.e = this.currTransX1
-        this.f = this.currTransY1
+    function mouseStop(x_m,y_m){
+        this.currTransXSVG = x_m - bb.cx
+        this.currTransYSVG = y_m - bb.cy
+        this.currTransXImg = this.shiftOriginX + x_m - bb.width*0.5;
+        this.currTransYImg = this.shiftOriginY + y_m - bb.height*0.5;
+
+        setMatrix(1,0,this.currTransXSVG,this.currTransYSVG);
+
         this.active = false
+
+        resetValues();
+
         console.log("mousestop")
-        this.currTransX1 = 0;
-        this.currTransX2Old = this.currTransX2Curr;
-        this.currTransY1 = 0;
-        this.currTransY2Old = this.currTransY2Curr;
-        this.angle1 = 0;
-        this.scale1 = 1;
     }
 
     function importPath(){
